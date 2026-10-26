@@ -1,0 +1,122 @@
+@import "tailwindcss";
+/* Self-hosted fonts (BYD Philippines type system): Chakra Petch for headings, Fustat for text.
+   No dependency on Google Fonts being reachable during a demo. */
+@import "@fontsource/chakra-petch/500.css";
+@import "@fontsource/chakra-petch/600.css";
+@import "@fontsource/chakra-petch/700.css";
+@import "@fontsource-variable/fustat";
+
+@theme {
+  --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Chakra Petch", "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-950: #000e26;
+  --color-brand-900: #001e50;
+  --color-brand-800: #00296b;
+  --color-brand-700: #0040c5;
+  --color-brand-500: #1e6bff;
+  --color-accent: #00b0f0;
+  /* Call-to-action colour. BYD uses red (#d70d1a); FAW-VW keeps Volkswagen blue. */
+  --color-cta: #0040c5;
+  --color-cta-hover: #00319a;
+  --color-ink: #121212;
+  --color-carbon: #121212;
+  --color-mist: #f8f8f8;
+  --color-line: #e3e3e3;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-mist);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-cta;
+  }
+  .h-section {
+    @apply font-display text-[2rem] font-bold leading-[1.1] text-ink sm:text-[2.75rem];
+  }
+
+  /* Buttons: square, uppercase, bold, with the notched top-right corner. */
+  .btn,
+  .btn-primary,
+  .btn-light,
+  .btn-dark,
+  .btn-outline {
+    @apply inline-flex h-12 items-center justify-center gap-2 px-6 text-[15px] font-bold uppercase leading-none transition disabled:cursor-not-allowed disabled:opacity-50;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+  .btn-primary {
+    @apply bg-cta text-white hover:bg-cta-hover;
+  }
+  .btn-light {
+    @apply bg-white text-ink hover:bg-[#ececec];
+  }
+  .btn-dark {
+    @apply bg-carbon text-white hover:bg-black;
+  }
+  .btn-outline {
+    @apply bg-[#e9e9e9] text-ink hover:bg-[#dcdcdc];
+  }
+  .btn-sm {
+    @apply h-9 px-5 text-sm;
+  }
+  .link-cta {
+    @apply inline-flex items-center gap-1.5 text-sm font-bold uppercase text-ink transition hover:text-cta;
+  }
+
+  /* Tags as on BYD hero and cards */
+  .tag {
+    @apply inline-block bg-white/30 px-2 py-1 font-display text-sm font-bold leading-none text-white;
+  }
+  .tag-dark {
+    @apply inline-block bg-ink/85 px-2 py-1 font-display text-sm font-bold leading-none text-white;
+  }
+  .notch {
+    clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%);
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-ink;
+  }
+  .field-input {
+    @apply w-full border border-[#cfcfcf] bg-white px-4 py-3 text-[15px] text-ink outline-none transition placeholder:text-slate-400 focus:border-cta focus:ring-2 focus:ring-cta/15 disabled:bg-[#f2f2f2] disabled:text-slate-400;
+  }
+  select.field-input {
+    @apply appearance-none pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23121212' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 1.1rem;
+  }
+  .card {
+    @apply border border-line bg-white;
+  }
+  .prose-page h2 {
+    @apply mt-10 font-display text-2xl font-bold text-ink;
+  }
+  .prose-page p,
+  .prose-page li {
+    @apply mt-3 leading-relaxed text-[#4a4a4a];
+  }
+  .prose-page ul {
+    @apply mt-3 list-disc space-y-1 pl-5;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

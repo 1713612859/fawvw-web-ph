@@ -1,0 +1,23 @@
+node_modules
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# test output
+test-results
+playwright-report
+blob-report
+
+# local tooling
+.claude/
+
+# original FAW-VW photos (kept locally only; repo is public)
+assets-src/

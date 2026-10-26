@@ -1,0 +1,28 @@
+{
+  "name": "fawvw-ph-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --port 3210",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview --port 3210",
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:e2e": "nuxt generate && playwright test",
+    "test:all": "npm run test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@fontsource-variable/fustat": "^5.3.0",
+    "@fontsource/chakra-petch": "^5.3.0",
+    "nuxt": "^4.6.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "vitest": "^5.0.5"
+  }
+}
