@@ -21,3 +21,6 @@ blob-report
 
 # original FAW-VW photos (kept locally only; repo is public)
 assets-src/
+
+# deployment packages
+release/
