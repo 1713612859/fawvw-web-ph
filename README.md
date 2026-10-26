@@ -33,6 +33,8 @@ npm run dev        # http://localhost:3210
 npm run generate   # static HTML in .output/public
 ```
 
+Deployment (Cloudflare Pages / Netlify / Vercel, custom domain, pre-launch checklist): see [DEPLOY.md](DEPLOY.md).
+
 ## Tests
 
 ```bash
