@@ -1,4 +1,5 @@
 import { heroSlides, promos } from '../../app/data/home'
+import { media } from '../../app/data/media'
 import { findModel, models } from '../../app/data/models'
 import { expect, test, open } from './helpers'
 
@@ -11,12 +12,19 @@ test('hero carousel: buttons, slide picker and autoplay', async ({ page, problem
   const hero = page.getByRole('region', { name: 'Featured models' })
   const current = () => hero.locator('button[aria-current="true"]')
   await expect(current()).toHaveAccessibleName(`Show ${heroNames[0]}`)
+  // On-demand loading: only the visible slide's photo is on the page at first.
+  await expect(hero.locator('img')).toHaveCount(1)
 
   // Autoplay advances on its own (6.5 s per slide) while the pointer is elsewhere.
   await expect(current()).toHaveAccessibleName(`Show ${heroNames[1]}`, { timeout: 9_000 })
 
+  // The next slide was preloaded before it appeared.
+  await expect(hero.locator(`img[src="${media[heroSlides[1]!.model]!.hero!.src}"]`)).toBeAttached()
+
   await hero.getByRole('button', { name: `Show ${heroNames[3]}` }).click()
   await expect(current()).toHaveAccessibleName(`Show ${heroNames[3]}`)
+  // Jumping ahead loads that slide's photo on demand.
+  await expect(hero.locator(`img[src="${media[heroSlides[3]!.model]!.hero!.src}"]`)).toBeAttached()
   await expect(hero.getByRole('link', { name: `View ${heroNames[3]}` })).toBeVisible()
 
   if (info.project.name === 'desktop') {

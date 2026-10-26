@@ -57,6 +57,7 @@ describe('official photos', () => {
     expect(m!.features).toHaveLength(modelDetails[slug]!.highlights.length)
     for (const p of all) {
       expect(existsSync(publicFile(p.src)), p.src).toBe(true)
+      expect(existsSync(publicFile(p.thumb)), p.thumb).toBe(true)
       expect(p.alt.length).toBeGreaterThan(10)
     }
   })

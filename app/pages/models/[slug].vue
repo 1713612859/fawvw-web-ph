@@ -56,6 +56,14 @@ function galleryStep(d: number) {
   const n = galleryList.value.length
   galleryIndex.value = (galleryIndex.value + d + n) % n
 }
+// Only the current and the next large photo are put on the page; others load when reached.
+const galleryLoaded = reactive(new Set<string>())
+watchEffect(() => {
+  const list = galleryList.value
+  if (!list.length) return
+  galleryLoaded.add(list[galleryIndex.value % list.length]!.src)
+  if (list.length > 1) galleryLoaded.add(list[(galleryIndex.value + 1) % list.length]!.src)
+})
 
 
 // Highlight the section bar item for the section in view.
@@ -274,16 +282,19 @@ onBeforeUnmount(() => observer?.disconnect())
     <!-- Gallery -->
     <section v-if="photos.gallery.length" id="gallery" class="scroll-mt-32 bg-carbon">
       <div class="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[21/9]">
-        <img
-          v-for="(p, i) in galleryList"
-          :key="p.src"
-          :src="p.src"
-          :alt="p.alt"
-          loading="lazy"
-          class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
-          :class="i === galleryIndex ? 'opacity-100' : 'opacity-0'"
-          :aria-hidden="i !== galleryIndex"
-        >
+        <template v-for="(p, i) in galleryList" :key="p.src">
+          <img
+            v-if="galleryLoaded.has(p.src)"
+            :src="p.src"
+            :alt="p.alt"
+            loading="lazy"
+            decoding="async"
+            data-gallery-photo
+            class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+            :class="i === galleryIndex ? 'opacity-100' : 'opacity-0'"
+            :aria-hidden="i !== galleryIndex"
+          >
+        </template>
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true" />
         <template v-if="galleryList.length > 1">
           <button type="button" class="absolute left-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/60" aria-label="Previous photo" @click="galleryStep(-1)">
@@ -303,7 +314,7 @@ onBeforeUnmount(() => observer?.disconnect())
               :aria-current="i === galleryIndex ? 'true' : undefined"
               @click="galleryIndex = i"
             >
-              <img :src="p.src" alt="" loading="lazy" class="h-full w-full object-cover">
+              <img :src="p.thumb" alt="" loading="lazy" width="240" height="135" class="h-full w-full object-cover">
             </button>
           </div>
         </template>

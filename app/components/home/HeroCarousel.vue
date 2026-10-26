@@ -13,6 +13,12 @@ const INTERVAL = 6500
 
 const current = ref(0)
 const progress = ref(0)
+// Photos are loaded on demand: the visible slide first, the next one shortly before it shows.
+const PRELOAD_AT = 0.6
+const loaded = reactive(new Set<number>([0]))
+function want(i: number) {
+  loaded.add((i + slides.length) % slides.length)
+}
 const hovering = ref(false)
 const autoplay = ref(true)
 
@@ -23,6 +29,7 @@ function loop(t: number) {
     // Real elapsed time (capped at 1 s so a backgrounded tab doesn't skip slides),
     // so slides advance every INTERVAL even when the device renders few frames.
     progress.value += Math.min(t - last, 1000) / INTERVAL
+    if (progress.value >= PRELOAD_AT) want(current.value + 1)
     if (progress.value >= 1) {
       progress.value = 0
       current.value = (current.value + 1) % slides.length
@@ -36,6 +43,7 @@ function go(i: number) {
   current.value = (i + slides.length) % slides.length
   progress.value = 0
 }
+watch(current, (c) => want(c))
 
 onMounted(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) autoplay.value = false
@@ -73,14 +81,16 @@ function onTouchEnd(e: TouchEvent) {
       :aria-label="`${i + 1} of ${slides.length}: ${s.model.name}`"
       :aria-hidden="i !== current"
     >
-      <img
-        v-if="s.photo"
-        :src="s.photo.src"
-        :alt="s.photo.alt"
-        :fetchpriority="i === 0 ? 'high' : 'low'"
-        :loading="i === 0 ? 'eager' : 'lazy'"
-        class="absolute inset-0 -z-20 h-full w-full object-cover"
-      >
+      <template v-if="s.photo">
+        <img
+          v-if="loaded.has(i)"
+          :src="s.photo.src"
+          :alt="s.photo.alt"
+          :fetchpriority="i === 0 ? 'high' : 'low'"
+          decoding="async"
+          class="absolute inset-0 -z-20 h-full w-full object-cover"
+        >
+      </template>
       <div v-else class="absolute inset-0 -z-20 flex items-end justify-center bg-[radial-gradient(ellipse_at_50%_60%,#2b2f36,#121212_70%)] pb-[16%]">
         <div class="aspect-[79/29] w-[70%] max-w-3xl"><CarImage :src="s.model.image" :alt="s.model.name" /></div>
       </div>

@@ -2,6 +2,8 @@
 // scripts/process-official-photos.mjs into /public/images/models/<slug>/photo-<n>.webp.
 export interface Photo {
   src: string
+  // ~240 px wide version for the gallery thumbnail strip (scripts/make-thumbs.mjs)
+  thumb: string
   alt: string
   kind: 'exterior' | 'interior'
 }
@@ -16,6 +18,7 @@ export interface ModelMedia {
 
 const p = (slug: string, n: number, alt: string, kind: Photo['kind'] = 'exterior'): Photo => ({
   src: `/images/models/${slug}/photo-${n}.webp`,
+  thumb: `/images/models/${slug}/photo-${n}-thumb.webp`,
   alt,
   kind,
 })

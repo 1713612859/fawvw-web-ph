@@ -22,6 +22,11 @@ in `app/assets/css/main.css` (Volkswagen blue; BYD uses red `#d70d1a`).
 - `public/images/models/<slug>/photo-<n>.webp`: scenic/interior photos. Originals are in
   `assets-src/official/` (list in `scripts/official-photos.json`); the vetted selection is
   converted by `node scripts/process-official-photos.mjs`. Page usage is set in `app/data/media.ts`.
+- `public/images/models/<slug>/photo-<n>-thumb.webp`: 240 px gallery thumbnails, made from the
+  web photos by `node scripts/make-thumbs.mjs` (re-run after changing photos).
+- Loading: below-the-fold images are lazy; the home carousel loads the visible slide's photo first
+  and preloads the next one shortly before it shows; the model gallery renders only the current
+  and next large photo.
 - `assets-src/` (originals) is not in git because this repository is public. To regenerate images,
   re-download the files listed in `scripts/official-photos.json` into `assets-src/official/<slug>/<n>.jpg`.
 
