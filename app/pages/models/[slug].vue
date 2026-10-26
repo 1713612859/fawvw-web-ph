@@ -102,7 +102,7 @@ onBeforeUnmount(() => observer?.disconnect())
     </div>
 
     <!-- Hero -->
-    <section id="overview" class="relative isolate flex h-[calc(100svh-7.5rem)] max-h-[880px] min-h-[620px] scroll-mt-32 items-end overflow-hidden bg-carbon text-white">
+    <section id="overview" class="relative isolate flex min-h-[620px] scroll-mt-32 items-end overflow-hidden bg-carbon text-white sm:h-[calc(100svh-7.5rem)] sm:max-h-[880px]">
       <img
         v-if="photos.hero"
         :src="photos.hero.src"
@@ -119,7 +119,7 @@ onBeforeUnmount(() => observer?.disconnect())
       <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/75 via-black/30 to-transparent" aria-hidden="true" />
       <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/10 to-black/30" aria-hidden="true" />
 
-      <div class="container-x w-full pb-8">
+      <div class="container-x w-full pb-8 pt-24 sm:pt-0">
         <div class="max-w-xl">
           <div class="flex flex-wrap gap-2">
             <span v-for="b in model.badges" :key="b" class="tag">{{ b }}</span>

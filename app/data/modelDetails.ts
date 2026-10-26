@@ -114,7 +114,7 @@ export const modelDetails: Record<string, ModelDetail> = {
       { name: '1.5 TSI PHEV Comfort', price: 2048000, features: ['DC fast charging', 'Vehicle-to-load', 'Digital cockpit'] },
       { name: '1.5 TSI PHEV Premium', price: 2248000, features: ['Navigate on Autopilot', 'Memory parking', 'Premium audio'] },
     ],
-    spec: { length: 4917, width: 1866, height: 1475, wheelbase: 2841, seats: 5, powertrain: '1.5 TSI plug-in hybrid', power: '150 kW (system)', torque: '220 Nm (engine)', transmission: 'Single-speed hybrid', drive: 'Front-wheel drive', efficiency: '1,510 km combined (CLTC)', airbags: 6, adas: 'Highway NOA, memory parking', screen: '15-inch touchscreen', connectivity, climate: 'Tri-zone automatic' },
+    spec: { length: 4917, width: 1866, height: 1475, wheelbase: 2841, seats: 5, powertrain: '1.5 TSI plug-in hybrid', power: '150 kW (system)', torque: '220 Nm (engine)', transmission: 'Single-speed hybrid', drive: 'Front-wheel drive', efficiency: '1,510 km (CLTC)', airbags: 6, adas: 'Highway NOA, memory parking', screen: '15-inch touchscreen', connectivity, climate: 'Tri-zone automatic' },
   },
   'id-aura-t6': {
     intro: 'The ID. AURA T6 is a fully electric family SUV: spacious, near-silent and quick to charge, designed for the way Filipino families drive today.',

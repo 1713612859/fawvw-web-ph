@@ -1,14 +1,12 @@
 @import "tailwindcss";
-/* Self-hosted fonts (BYD Philippines type system): Chakra Petch for headings, Fustat for text.
-   No dependency on Google Fonts being reachable during a demo. */
-@import "@fontsource/chakra-petch/500.css";
-@import "@fontsource/chakra-petch/600.css";
-@import "@fontsource/chakra-petch/700.css";
-@import "@fontsource-variable/fustat";
+/* Self-hosted fonts: Archivo (variable weight + width) for headings, Inter for text.
+   No dependency on Google Fonts being reachable during a demo. Both are SIL OFL licensed. */
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/inter";
 
 @theme {
-  --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Chakra Petch", "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 
   --color-brand-950: #000e26;
   --color-brand-900: #001e50;
@@ -112,6 +110,11 @@ body {
   .prose-page ul {
     @apply mt-3 list-disc space-y-1 pl-5;
   }
+}
+
+/* Headings use Archivo slightly expanded for a wider, automotive look. */
+.font-display {
+  font-stretch: 112%;
 }
 
 .no-scrollbar {

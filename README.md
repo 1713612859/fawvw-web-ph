@@ -9,9 +9,10 @@ Content lives in `app/data/*.ts` (sample data); later it moves to a headless CMS
 
 ## Design
 
-Visual style follows the BYD Cars Philippines site: Chakra Petch headings, Fustat body text
-(both self-hosted), #121212 dark sections, #F8F8F8 page background, square cards, uppercase
-buttons with a notched corner. The call-to-action colour is a single token, `--color-cta`
+Layout follows the BYD Cars Philippines site: #121212 dark sections, #F8F8F8 page background,
+square cards, uppercase buttons with a notched corner. Typography is our own: Archivo (headings,
+set at 112% width) and Inter (body text), both SIL OFL and self-hosted. Long term, replace them
+with Volkswagen's corporate fonts (VW Head / VW Text) from the FAW-VW brand kit. The call-to-action colour is a single token, `--color-cta`
 in `app/assets/css/main.css` (Volkswagen blue; BYD uses red `#d70d1a`).
 
 ## Images
