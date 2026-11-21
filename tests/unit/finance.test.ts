@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { financeDefaults, monthlyPayment, teaserMonthly } from '~/utils/finance'
+import { financeDefaults, monthlyPayment } from '~/utils/finance'
 
 describe('monthlyPayment', () => {
   it('matches the standard amortization formula (₱1,118,400 at 8% for 60 months)', () => {
@@ -25,10 +25,8 @@ describe('monthlyPayment', () => {
   })
 })
 
-describe('teaserMonthly', () => {
-  it('uses the site defaults (20% down, 60 months, 8%)', () => {
-    const { downPct, months, rate } = financeDefaults
+describe('financeDefaults', () => {
+  it('starts the calculator at 20% down, 60 months, 8%', () => {
     expect(financeDefaults).toEqual({ downPct: 20, months: 60, rate: 8 })
-    expect(teaserMonthly(1398000)).toBeCloseTo(monthlyPayment(1398000 * (1 - downPct / 100), rate, months), 6)
   })
 })

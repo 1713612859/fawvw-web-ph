@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Vehicle card in the BYD Philippines style.
-import { type CarModel, formatPrice } from '~/data/models'
+// Vehicle card in the BYD Philippines style (no prices: quotes come from the dealers).
+import { type CarModel, powertrainLabel } from '~/data/models'
 
 defineProps<{ model: CarModel }>()
 </script>
@@ -13,10 +13,18 @@ defineProps<{ model: CarModel }>()
       </div>
     </NuxtLink>
     <div class="flex flex-1 flex-col px-5 pb-6 pt-2 sm:px-6">
-      <h3 class="text-xl font-medium text-ink">{{ model.name }}</h3>
-      <p class="text-[15px] text-[#777]">{{ model.badges[0] }}</p>
-      <p class="mt-3 text-sm font-bold text-ink">{{ model.keySpecs[0]?.value }} · {{ model.keySpecs[1]?.value }}</p>
-      <p class="mt-2 text-[15px] text-ink">Starts at <span class="ml-1">{{ formatPrice(model.priceFrom) }}</span></p>
+      <p class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cta">
+        {{ model.brand }}
+        <span v-if="model.launchedPH" class="bg-cta px-1.5 py-0.5 text-[10px] tracking-[0.1em] text-white">New in PH</span>
+      </p>
+      <h3 class="mt-1 text-xl font-medium text-ink">{{ model.name }}</h3>
+      <p class="text-[15px] text-[#777]">{{ model.body }} · {{ powertrainLabel(model) }}</p>
+      <dl class="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-4">
+        <div v-for="s in model.keySpecs.slice(0, 2)" :key="s.label">
+          <dt class="text-xs text-[#777]">{{ s.label }}</dt>
+          <dd class="text-sm font-bold text-ink">{{ s.value }}</dd>
+        </div>
+      </dl>
       <div class="mt-auto pt-5">
         <NuxtLink :to="`/models/${model.slug}`" class="btn-primary btn-sm w-full">View vehicle</NuxtLink>
         <NuxtLink :to="`/get-a-quote?model=${model.slug}`" class="mt-2 flex h-9 items-center justify-center text-sm font-bold uppercase text-ink transition hover:text-cta">Get a quote</NuxtLink>

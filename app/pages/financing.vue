@@ -1,16 +1,20 @@
 <script setup lang="ts">
+// Loan estimate from a price the visitor enters (the site lists no prices: they come
+// from the dealer's quote).
 import { financeDefaults, monthlyPayment } from '~/utils/finance'
-import { modelDetails } from '~/data/modelDetails'
-import { findModel, formatPrice, models } from '~/data/models'
+import { formatPeso } from '~/utils/format'
+import { findModel, models } from '~/data/models'
+import { variantNames } from '~/data/variants'
 
 useSeoMeta({
   title: 'Financing Calculator',
-  description: 'Estimate the down payment and monthly amortization for any FAW-Volkswagen model.',
+  description: 'Estimate the down payment and monthly amortization for your FAWCAR, using the price from your dealer quote.',
 })
 
 const route = useRoute()
 const model = ref(models[0]!.slug)
 const variantIdx = ref(0)
+const price = ref<number | ''>('')
 const downPct = ref(financeDefaults.downPct)
 const months = ref(financeDefaults.months)
 const rate = ref(financeDefaults.rate)
@@ -21,12 +25,12 @@ onMounted(() => {
   if (m) model.value = m.slug
 })
 
-const variants = computed(() => modelDetails[model.value]?.variants ?? [])
+const variants = computed(() => variantNames[model.value] ?? [])
 watch(model, () => (variantIdx.value = 0))
 
-const price = computed(() => variants.value[variantIdx.value]?.price ?? 0)
-const down = computed(() => Math.round((price.value * downPct.value) / 100))
-const financed = computed(() => price.value - down.value)
+const amount = computed(() => Math.max(0, Number(price.value) || 0))
+const down = computed(() => Math.round((amount.value * downPct.value) / 100))
+const financed = computed(() => amount.value - down.value)
 const monthly = computed(() => monthlyPayment(financed.value, Number(rate.value) || 0, months.value))
 const totalInterest = computed(() => monthly.value * months.value - financed.value)
 const selected = computed(() => findModel(model.value))
@@ -37,7 +41,7 @@ const selected = computed(() => findModel(model.value))
     <PageHeader
       eyebrow="Shopping tools"
       title="Financing Calculator"
-      intro="Estimate your down payment and monthly amortization. Final terms depend on the approval of our partner banks."
+      intro="Enter the price from your dealer quote to estimate the down payment and monthly amortization. Final terms depend on the approval of the bank."
       :crumbs="[{ label: 'Financing Calculator' }]"
     />
 
@@ -54,15 +58,34 @@ const selected = computed(() => findModel(model.value))
             <div>
               <label class="field-label" for="fin-variant">Variant</label>
               <select id="fin-variant" v-model.number="variantIdx" class="field-input">
-                <option v-for="(v, i) in variants" :key="v.name" :value="i">{{ v.name }} – {{ formatPrice(v.price) }}</option>
+                <option v-for="(v, i) in variants" :key="v" :value="i">{{ v }}</option>
               </select>
             </div>
+          </div>
+
+          <div class="sm:max-w-sm">
+            <label class="field-label" for="fin-price">Vehicle price (₱)</label>
+            <input
+              id="fin-price"
+              v-model.number="price"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1000"
+              placeholder="e.g. 1500000"
+              class="field-input"
+              aria-describedby="fin-price-help"
+            >
+            <p id="fin-price-help" class="mt-1.5 text-xs text-slate-500">
+              Use the price from your dealer's quote.
+              <NuxtLink :to="`/get-a-quote?model=${model}&variant=${variantIdx}`" class="font-semibold text-cta hover:underline">Request a quote</NuxtLink>
+            </p>
           </div>
 
           <div>
             <div class="flex items-baseline justify-between">
               <label class="field-label" for="fin-down">Down payment</label>
-              <p class="text-sm font-semibold text-brand-900">{{ downPct }}% · {{ formatPrice(down) }}</p>
+              <p class="text-sm font-semibold text-brand-900">{{ downPct }}%<template v-if="amount"> · {{ formatPeso(down) }}</template></p>
             </div>
             <input id="fin-down" v-model.number="downPct" type="range" min="20" max="80" step="5" class="w-full accent-brand-900">
             <div class="mt-1 flex justify-between text-xs text-slate-400"><span>20%</span><span>80%</span></div>
@@ -92,20 +115,23 @@ const selected = computed(() => findModel(model.value))
         </div>
 
         <aside class="lg:sticky lg:top-24 lg:self-start">
-          <div class="notch overflow-hidden bg-carbon text-white">
-            <div class="aspect-[16/8] bg-[radial-gradient(ellipse_at_50%_60%,#2b2f36,#121212_70%)] px-6 pt-4">
+          <div class="notch overflow-hidden bg-carbon text-white" data-finance-result>
+            <div class="aspect-[2/1] bg-[radial-gradient(ellipse_at_50%_60%,#2b2f36,#121212_70%)] px-6 pt-4">
               <CarImage v-if="selected" :src="selected.image" :alt="selected.name" :label="false" />
             </div>
             <div class="p-6 sm:p-8">
               <p class="text-sm text-white/60">Estimated monthly amortization</p>
-              <p class="mt-1 font-display text-4xl font-extrabold">{{ formatPrice(Math.round(monthly)) }}</p>
-              <p class="text-sm text-white/60">for {{ months }} months</p>
-              <dl class="mt-6 space-y-3 border-t border-white/10 pt-6 text-sm">
-                <div class="flex justify-between"><dt class="text-white/60">Vehicle price (SRP)</dt><dd class="font-medium">{{ formatPrice(price) }}</dd></div>
-                <div class="flex justify-between"><dt class="text-white/60">Down payment ({{ downPct }}%)</dt><dd class="font-medium">{{ formatPrice(down) }}</dd></div>
-                <div class="flex justify-between"><dt class="text-white/60">Amount financed</dt><dd class="font-medium">{{ formatPrice(financed) }}</dd></div>
-                <div class="flex justify-between"><dt class="text-white/60">Total interest</dt><dd class="font-medium">{{ formatPrice(Math.round(totalInterest)) }}</dd></div>
-              </dl>
+              <template v-if="amount">
+                <p class="mt-1 font-display text-4xl font-extrabold">{{ formatPeso(Math.round(monthly)) }}</p>
+                <p class="text-sm text-white/60">for {{ months }} months</p>
+                <dl class="mt-6 space-y-3 border-t border-white/10 pt-6 text-sm">
+                  <div class="flex justify-between"><dt class="text-white/60">Vehicle price</dt><dd class="font-medium">{{ formatPeso(amount) }}</dd></div>
+                  <div class="flex justify-between"><dt class="text-white/60">Down payment ({{ downPct }}%)</dt><dd class="font-medium">{{ formatPeso(down) }}</dd></div>
+                  <div class="flex justify-between"><dt class="text-white/60">Amount financed</dt><dd class="font-medium">{{ formatPeso(financed) }}</dd></div>
+                  <div class="flex justify-between"><dt class="text-white/60">Total interest</dt><dd class="font-medium">{{ formatPeso(Math.round(totalInterest)) }}</dd></div>
+                </dl>
+              </template>
+              <p v-else class="mt-3 text-sm leading-relaxed text-white/70">Enter the vehicle price to see your estimate.</p>
               <NuxtLink :to="`/get-a-quote?model=${model}&variant=${variantIdx}`" class="btn-light mt-8 w-full">
                 Get an official quote <AppIcon name="arrow-right" class="size-4" />
               </NuxtLink>

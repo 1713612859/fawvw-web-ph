@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { teaserMonthly } from '~/utils/finance'
 import { makeReference } from '~/utils/format'
 import { type Region, dealers } from '~/data/dealers'
-import { modelDetails } from '~/data/modelDetails'
-import { findModel, formatPrice, models } from '~/data/models'
+import { findModel, models } from '~/data/models'
+import { variantNames } from '~/data/variants'
 
 useSeoMeta({
   title: 'Get a Quote',
-  description: 'Request a fast, customized price quote from your nearest FAW-VW dealer.',
+  description: 'Request a customized price quote from your nearest FAWCAR dealer in the Philippines.',
 })
 
 const route = useRoute()
@@ -32,19 +31,19 @@ const form = reactive({
 })
 
 const selected = computed(() => findModel(form.model))
-const variants = computed(() => (form.model ? modelDetails[form.model]?.variants ?? [] : []))
+const variants = computed(() => (form.model ? variantNames[form.model] ?? [] : []))
 const variant = computed(() => variants.value[form.variant] ?? variants.value[0])
 watch(() => form.model, () => {
   if (!variants.value[form.variant]) form.variant = 0
 })
 
-// Prefill from links like /get-a-quote?model=talagon&variant=1 (after mount, so the
+// Prefill from links like /get-a-quote?model=joyee-s04&variant=1 (after mount, so the
 // prerendered HTML and the first client render match).
 onMounted(() => {
   const m = findModel(String(route.query.model ?? ''))
   if (m) form.model = m.slug
   const v = Number(route.query.variant)
-  if (m && Number.isInteger(v) && modelDetails[m.slug]?.variants[v]) form.variant = v
+  if (m && Number.isInteger(v) && variantNames[m.slug]?.[v]) form.variant = v
   const d = dealers.find((x) => x.id === route.query.dealer)
   if (d) {
     form.region = d.region
@@ -87,7 +86,7 @@ function reset() {
 }
 
 const summary = computed(() => [
-  { label: 'Model', value: `${selected.value?.name ?? ''} ${variant.value?.name ?? ''}`.trim() },
+  { label: 'Model', value: `${selected.value?.name ?? ''} ${variant.value ?? ''}`.trim() },
   { label: 'Dealer', value: dealers.find((d) => d.id === form.dealer)?.name ?? '' },
   { label: 'Payment', value: payments.find((p) => p.value === form.payment)?.label ?? '' },
   { label: 'Contact', value: `${form.firstName} ${form.lastName} · ${form.mobile}` },
@@ -144,9 +143,9 @@ const summary = computed(() => [
                     :class="form.model === m.slug ? 'border-brand-700 bg-brand-700/5 ring-2 ring-brand-700/15' : 'border-slate-200 hover:border-slate-300'"
                   >
                     <input v-model="form.model" type="radio" name="model" :value="m.slug" class="sr-only" @change="modelError = false">
-                    <span class="block aspect-[79/29]"><CarImage :src="m.image" :alt="m.name" :label="false" /></span>
+                    <span class="block aspect-[2/1]"><CarImage :src="m.image" :alt="m.name" :label="false" /></span>
                     <span class="mt-2 block text-sm font-semibold">{{ m.name }}</span>
-                    <span class="block text-xs text-slate-500">From {{ formatPrice(m.priceFrom) }}</span>
+                    <span class="block text-xs text-slate-500">{{ m.body }}</span>
                   </label>
                 </div>
                 <p v-if="modelError" class="mt-2 text-sm text-rose-600">Please choose a model.</p>
@@ -156,7 +155,7 @@ const summary = computed(() => [
                   <label class="field-label" for="variant">Variant *</label>
                   <select id="variant" v-model.number="form.variant" class="field-input" :disabled="!form.model" required>
                     <option v-if="!form.model" :value="0" disabled>Choose a model first</option>
-                    <option v-for="(v, i) in variants" :key="v.name" :value="i">{{ v.name }} – {{ formatPrice(v.price) }}</option>
+                    <option v-for="(v, i) in variants" :key="v" :value="i">{{ v }}</option>
                   </select>
                 </div>
                 <div>
@@ -236,9 +235,8 @@ const summary = computed(() => [
             <div class="p-6">
               <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Your selection</p>
               <p class="mt-2 font-display text-xl font-bold">{{ selected?.name ?? '—' }}</p>
-              <p class="text-sm text-slate-500">{{ variant?.name ?? 'Variant' }}</p>
-              <p v-if="variant" class="mt-4 text-2xl font-bold text-brand-900">{{ formatPrice(variant.price) }}*</p>
-              <p v-if="variant" class="text-sm text-slate-500">or from {{ formatPrice(Math.round(teaserMonthly(variant.price))) }}/month*</p>
+              <p class="text-sm text-slate-500">{{ variant ?? 'Variant' }}</p>
+              <p v-if="selected" class="mt-4 text-sm text-slate-600">Your dealer will send the Philippine price, available colors and delivery time for this variant.</p>
               <ul class="mt-6 space-y-2 border-t border-slate-100 pt-5 text-sm text-slate-600">
                 <li class="flex gap-2"><AppIcon name="check" class="size-4 text-brand-700" /> No obligation, free of charge</li>
                 <li class="flex gap-2"><AppIcon name="check" class="size-4 text-brand-700" /> Reply within one business day</li>
@@ -246,7 +244,6 @@ const summary = computed(() => [
               </ul>
             </div>
           </div>
-          <p class="mt-3 text-xs text-slate-400">*Suggested retail price. Monthly estimate assumes 20% down, 60 months, 8% p.a.</p>
         </aside>
       </div>
     </section>

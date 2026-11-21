@@ -45,7 +45,7 @@ test('unknown URLs show the branded 404 page with working shortcuts', async ({ p
   await expect(page.getByRole('heading', { name: "We can't find that page" })).toBeVisible()
   await page.getByRole('button', { name: 'All models' }).click()
   await expect(page).toHaveURL(/\/models$/)
-  await expect(page.getByRole('heading', { level: 1, name: 'Find your Volkswagen' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Find your FAWCAR' })).toBeVisible()
 })
 
 test('unknown model slug shows the 404 page', async ({ page }) => {

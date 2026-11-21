@@ -5,7 +5,7 @@ import { findModel, models } from '~/data/models'
 
 useSeoMeta({
   title: 'Book a Test Drive',
-  description: 'Schedule a test drive of any FAW-Volkswagen model at a showroom near you.',
+  description: 'Schedule a test drive of a FAWCAR model at a showroom near you.',
 })
 
 const route = useRoute()

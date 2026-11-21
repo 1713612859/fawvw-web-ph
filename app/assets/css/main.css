@@ -8,15 +8,16 @@
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Archivo Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-950: #000e26;
-  --color-brand-900: #001e50;
-  --color-brand-800: #00296b;
-  --color-brand-700: #0040c5;
-  --color-brand-500: #1e6bff;
-  --color-accent: #00b0f0;
-  /* Call-to-action colour. BYD uses red (#d70d1a); FAW-VW keeps Volkswagen blue. */
-  --color-cta: #0040c5;
-  --color-cta-hover: #00319a;
+  /* FAWCAR blue, from the official logo artwork (#0D2A8F). */
+  --color-brand-950: #050f33;
+  --color-brand-900: #0a1f66;
+  --color-brand-800: #0b2479;
+  --color-brand-700: #0d2a8f;
+  --color-brand-500: #2f5bd9;
+  --color-accent: #4f8bff;
+  /* Call-to-action colour. BYD uses red (#d70d1a); FAWCAR uses its logo blue. */
+  --color-cta: #0d2a8f;
+  --color-cta-hover: #0a1f66;
   --color-ink: #121212;
   --color-carbon: #121212;
   --color-mist: #f8f8f8;

@@ -1,15 +1,10 @@
-// SAMPLE dealer network for the demo. Replace with the real showroom list
-// (name, full address, phone, hours, coordinates) before launch.
+// FAWCAR authorized retailers in the Philippines, as listed on fawcar.com (Authorized
+// Retailers, country "Philippines"). fawcar.com also gives a contact person and a mobile
+// number for each; those are not published here until the retailers confirm what to show.
+// Services other than sales, phone numbers and the Bulacan address are to be confirmed.
 
 export type Region = 'ncr' | 'luzon' | 'visayas' | 'mindanao'
 export type DealerService = 'Showroom' | 'Service' | 'Parts'
-
-export const regions: { key: Region; label: string }[] = [
-  { key: 'ncr', label: 'Metro Manila (NCR)' },
-  { key: 'luzon', label: 'North & South Luzon' },
-  { key: 'visayas', label: 'Visayas' },
-  { key: 'mindanao', label: 'Mindanao' },
-]
 
 export interface Dealer {
   id: string
@@ -17,24 +12,57 @@ export interface Dealer {
   region: Region
   city: string
   address: string
+  // Empty until confirmed: the page then points to the hotline.
   phone: string
   hours: string
   services: DealerService[]
+  // Shown under the address when part of the listing is not confirmed yet.
+  note?: string
 }
 
-const weekday = 'Mon–Sat 8:00 AM – 6:00 PM · Sun 9:00 AM – 5:00 PM'
-
 export const dealers: Dealer[] = [
-  { id: 'bgc', name: 'FAW-VW Bonifacio Global City', region: 'ncr', city: 'Taguig City', address: 'Bonifacio Global City, Taguig City, Metro Manila', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service', 'Parts'] },
-  { id: 'quezon-city', name: 'FAW-VW Quezon City', region: 'ncr', city: 'Quezon City', address: 'Quezon Avenue, Quezon City, Metro Manila', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service', 'Parts'] },
-  { id: 'alabang', name: 'FAW-VW Alabang', region: 'ncr', city: 'Muntinlupa City', address: 'Alabang, Muntinlupa City, Metro Manila', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service'] },
-  { id: 'pampanga', name: 'FAW-VW Pampanga', region: 'luzon', city: 'San Fernando', address: 'City of San Fernando, Pampanga', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service'] },
-  { id: 'batangas', name: 'FAW-VW Batangas', region: 'luzon', city: 'Batangas City', address: 'Batangas City, Batangas', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service'] },
-  { id: 'cebu', name: 'FAW-VW Cebu', region: 'visayas', city: 'Mandaue City', address: 'Mandaue City, Cebu', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service', 'Parts'] },
-  { id: 'iloilo', name: 'FAW-VW Iloilo', region: 'visayas', city: 'Iloilo City', address: 'Mandurriao, Iloilo City, Iloilo', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service'] },
-  { id: 'davao', name: 'FAW-VW Davao', region: 'mindanao', city: 'Davao City', address: 'Lanang, Davao City, Davao del Sur', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service', 'Parts'] },
-  { id: 'cdo', name: 'FAW-VW Cagayan de Oro', region: 'mindanao', city: 'Cagayan de Oro', address: 'Cagayan de Oro City, Misamis Oriental', phone: '+63 2 8000 0000', hours: weekday, services: ['Showroom', 'Service'] },
+  {
+    id: 'caloocan',
+    name: 'FAWCAR Manila (Caloocan)',
+    region: 'ncr',
+    city: 'Caloocan City',
+    address: '116C3 Road corner 6th St., Barangay 123, Caloocan City, Metro Manila',
+    phone: '',
+    hours: 'Weekdays 9:00 AM – 5:00 PM',
+    services: ['Showroom'],
+  },
+  {
+    id: 'angeles',
+    name: 'FAWCAR Angeles',
+    region: 'luzon',
+    city: 'Angeles City',
+    address: 'Friendship Highway, Santo Domingo, Angeles City, Pampanga',
+    phone: '',
+    hours: 'Weekdays 9:00 AM – 5:00 PM',
+    services: ['Showroom'],
+  },
+  {
+    id: 'bulacan',
+    name: 'FAWCAR Bulacan',
+    region: 'luzon',
+    city: 'Doña Remedios Trinidad',
+    address: 'Doña Remedios Trinidad, Bulacan',
+    phone: '',
+    hours: 'To be confirmed',
+    services: ['Showroom'],
+    note: 'Street address to be confirmed.',
+  },
 ]
+
+const allRegions: { key: Region; label: string }[] = [
+  { key: 'ncr', label: 'Metro Manila (NCR)' },
+  { key: 'luzon', label: 'North & South Luzon' },
+  { key: 'visayas', label: 'Visayas' },
+  { key: 'mindanao', label: 'Mindanao' },
+]
+
+// Only regions with at least one dealer, so the forms never offer an empty choice.
+export const regions = allRegions.filter((r) => dealers.some((d) => d.region === r.key))
 
 export function dealersIn(region: Region | '') {
   return region ? dealers.filter((d) => d.region === region) : dealers

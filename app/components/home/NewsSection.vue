@@ -7,7 +7,7 @@ import { news } from '~/data/home'
     <div class="container-x">
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p class="eyebrow">The FAW-VW blog</p>
+          <p class="eyebrow">FAWCAR news</p>
           <h2 class="h-section mt-3">Recent stories</h2>
         </div>
         <NuxtLink to="/news" class="btn-dark btn-sm">View all</NuxtLink>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useSeoMeta({ title: 'Cookie Policy', description: 'How FAW-VW Philippines uses cookies and how you can manage them.' })
+useSeoMeta({ title: 'Cookie Policy', description: 'How FAWCAR Philippines uses cookies and how you can manage them.' })
 
 const sections = [
   {

@@ -3,14 +3,14 @@ import { warranty } from '~/data/content'
 
 useSeoMeta({
   title: 'Warranty',
-  description: 'Warranty coverage for FAW-Volkswagen vehicles in the Philippines, including battery warranty and roadside assistance.',
+  description: 'Warranty coverage for FAWCAR vehicles in the Philippines: vehicle, high-voltage battery and roadside assistance. Terms to be confirmed.',
 })
 
 const conditions = [
-  'Scheduled maintenance is performed at an authorized FAW-VW service center.',
+  'Scheduled maintenance is performed at an authorized FAWCAR dealer.',
   'Genuine parts and recommended fluids are used.',
   'The vehicle is used for private, non-commercial purposes.',
-  'Defects are reported promptly to an authorized service center.',
+  'Defects are reported promptly to an authorized dealer.',
 ]
 </script>
 
@@ -19,7 +19,7 @@ const conditions = [
     <PageHeader
       eyebrow="Owners"
       title="Warranty"
-      intro="Drive with confidence: every new FAW-Volkswagen comes with comprehensive factory warranty coverage."
+      intro="Every new FAWCAR comes with factory warranty coverage. Terms for the Philippines are to be confirmed."
       :crumbs="[{ label: 'Owners' }, { label: 'Warranty' }]"
     />
 
@@ -48,7 +48,7 @@ const conditions = [
         <div class="notch flex flex-col justify-between bg-carbon p-7 text-white sm:p-8">
           <div>
             <h2 class="font-display text-xl font-bold">Need warranty service?</h2>
-            <p class="mt-3 text-white/70">Book an appointment at any authorized service center and mention your warranty concern. Our service advisor will take it from there.</p>
+            <p class="mt-3 text-white/70">Book an appointment at an authorized FAWCAR dealer and mention your warranty concern. Our service advisor will take it from there.</p>
           </div>
           <div class="mt-8 flex flex-wrap gap-3">
             <NuxtLink to="/owners/service" class="btn-light">Book a service</NuxtLink>

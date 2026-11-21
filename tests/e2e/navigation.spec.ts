@@ -1,9 +1,10 @@
-import { models } from '../../app/data/models'
+import { categories, models, powertrainLabel } from '../../app/data/models'
 import { site } from '../../app/data/site'
 import { expect, isMobile, test, open } from './helpers'
 
-// Menu links read "<Model> From ₱…": anchor the name so "Magotan" doesn't also match "Magotan PHEV".
-const modelLink = (name: string) => new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} From`)
+// Menu links read "<Model> <powertrain>": match the whole name so "BESTUNE B70" doesn't also match "BESTUNE B70S".
+const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const modelLink = (m: (typeof models)[number]) => new RegExp(`^${esc(m.name)} ${esc(powertrainLabel(m))}$`)
 
 test.describe('desktop header', () => {
   test.beforeEach(({}, info) => test.skip(isMobile(info.project.name), 'desktop only'))
@@ -15,11 +16,37 @@ test.describe('desktop header', () => {
     await header.getByRole('button', { name: 'Models' }).click()
     const panel = header.locator('div.absolute.top-full')
     await expect(panel).toBeVisible()
-    for (const m of models) await expect(panel.getByRole('link', { name: modelLink(m.name) })).toBeVisible()
-    await panel.getByRole('link', { name: /Magotan PHEV/ }).click()
-    await expect(page).toHaveURL(/\/models\/magotan-phev$/)
-    await expect(page.getByRole('heading', { level: 1, name: 'Magotan PHEV' })).toBeVisible()
+    for (const m of models) await expect(panel.getByRole('link', { name: modelLink(m) })).toBeVisible()
+    await panel.getByRole('link', { name: modelLink(models.find((m) => m.slug === 'joyee-s08')!) }).click()
+    await expect(page).toHaveURL(/\/models\/joyee-s08$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'JOYEE S08' })).toBeVisible()
     await expect(panel).toBeHidden()
+  })
+
+  test('home header is transparent over the hero and turns solid on scroll', async ({ page, problems }) => {
+    void problems
+    await open(page, '/')
+    const header = page.locator('header')
+    await expect(header).toHaveAttribute('data-overlay', 'true')
+    // The hero starts under the header.
+    const heroTop = await page.getByRole('region', { name: 'Featured models' }).evaluate((el) => el.getBoundingClientRect().top)
+    expect(heroTop).toBe(0)
+    await page.evaluate(() => window.scrollTo(0, 400))
+    await expect(header).not.toHaveAttribute('data-overlay', 'true')
+    // Other pages have the solid header.
+    await open(page, '/models')
+    await expect(header).not.toHaveAttribute('data-overlay', 'true')
+  })
+
+  test('mega menu category headings open the filtered line-up', async ({ page, problems }) => {
+    void problems
+    await open(page, '/')
+    const header = page.locator('header')
+    await header.getByRole('button', { name: 'Models' }).click()
+    await header.locator('div.absolute.top-full').getByRole('link', { name: /^SUVs/ }).click()
+    await expect(page).toHaveURL(/\/models\?category=suv$/)
+    await expect(page.getByRole('tab', { name: 'SUVs' })).toHaveAttribute('aria-selected', 'true')
+    await expect(page.locator('main article')).toHaveCount(models.filter((m) => m.category === 'suv').length)
   })
 
   test('menus open on hover and close with Escape or an outside click', async ({ page, problems }) => {
@@ -41,6 +68,8 @@ test.describe('desktop header', () => {
 
   test('header call-to-action buttons work', async ({ page, problems }) => {
     void problems
+    // "Book a Test Drive" joins "Get a Quote" in the header on wide screens only.
+    await page.setViewportSize({ width: 1600, height: 900 })
     await open(page, '/')
     await page.locator('header').getByRole('link', { name: 'Book a Test Drive' }).click()
     await expect(page).toHaveURL(/\/test-drive$/)
@@ -67,11 +96,23 @@ test.describe('mobile header', () => {
     const drawer = page.getByRole('dialog', { name: 'Menu' })
     await expect(drawer).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('hidden')
-    // Models section is open by default and lists every model.
-    for (const m of models) await expect(drawer.getByRole('link', { name: modelLink(m.name) })).toBeVisible()
+    // Models section is open by default with one row per body type; each opens its models,
+    // grouped by powertrain.
+    for (const c of categories) {
+      const row = drawer.getByRole('button', { name: new RegExp(`^${c.label} \\(`) })
+      await row.click()
+      await expect(row).toHaveAttribute('aria-expanded', 'true')
+      for (const m of models.filter((x) => x.category === c.key)) {
+        await expect(drawer.getByRole('link', { name: m.name, exact: true })).toBeVisible()
+      }
+    }
+    await drawer.getByRole('link', { name: 'JOYEE S04', exact: true }).click()
+    await expect(page).toHaveURL(/\/models\/joyee-s04$/)
+    await expect(drawer).toBeHidden()
+    await page.getByRole('button', { name: 'Open menu' }).click()
     await drawer.getByRole('button', { name: 'Shopping Tools' }).click()
-    await drawer.getByRole('link', { name: 'Price List' }).click()
-    await expect(page).toHaveURL(/\/price-list$/)
+    await drawer.getByRole('link', { name: 'Compare Models' }).click()
+    await expect(page).toHaveURL(/\/compare$/)
     await expect(drawer).toBeHidden()
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('')
   })
@@ -114,10 +155,16 @@ test.describe('cookie banner', () => {
   })
 })
 
-test('footer links navigate', async ({ page, problems }) => {
+test('footer links navigate (accordion on phones)', async ({ page, problems }, info) => {
   void problems
   await open(page, '/')
   const footer = page.locator('footer')
+  if (isMobile(info.project.name)) {
+    // Groups are collapsed on phones: one row each, tap to open.
+    await expect(footer.getByRole('link', { name: 'Owner FAQ' })).toBeHidden()
+    await footer.getByRole('button', { name: 'Owners' }).click()
+    await expect(footer.getByRole('button', { name: 'Owners' })).toHaveAttribute('aria-expanded', 'true')
+  }
   await footer.getByRole('link', { name: 'Owner FAQ' }).click()
   await expect(page).toHaveURL(/\/owners\/faq$/)
   await page.locator('footer').getByRole('link', { name: 'Privacy Notice' }).click()

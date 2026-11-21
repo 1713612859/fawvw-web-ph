@@ -5,7 +5,7 @@ import { models } from '~/data/models'
 
 useSeoMeta({
   title: 'Book a Service (PMS)',
-  description: 'Book preventive maintenance or repairs at an authorized FAW-VW service center.',
+  description: 'Request preventive maintenance or repairs at an authorized FAWCAR dealer.',
 })
 
 const services = ['Preventive maintenance (PMS)', 'General repair / diagnosis', 'Tires, battery & brakes', 'Body & paint', 'Warranty concern', 'Other']
@@ -53,7 +53,7 @@ const summary = computed(() => [
   { label: 'Vehicle', value: `${models.find((m) => m.slug === form.model)?.name ?? ''} · ${form.plate.toUpperCase()}` },
   { label: 'Service', value: form.service },
   { label: 'Schedule', value: form.date ? `${formatDate(form.date)}, ${form.slot}` : '' },
-  { label: 'Service center', value: dealers.find((d) => d.id === form.dealer)?.name ?? '' },
+  { label: 'Dealer', value: dealers.find((d) => d.id === form.dealer)?.name ?? '' },
 ])
 </script>
 
@@ -62,7 +62,7 @@ const summary = computed(() => [
     <PageHeader
       eyebrow="Owners"
       title="Book a Service"
-      intro="Keep your Volkswagen in top condition with factory-trained technicians and genuine parts."
+      intro="Keep your FAWCAR in top condition with trained technicians and genuine parts."
       :crumbs="[{ label: 'Owners' }, { label: 'Book a Service' }]"
     />
 
@@ -108,7 +108,7 @@ const summary = computed(() => [
           </fieldset>
 
           <fieldset class="space-y-4 border-t border-slate-100 pt-8">
-            <legend class="font-display text-lg font-bold">2. Schedule &amp; service center</legend>
+            <legend class="font-display text-lg font-bold">2. Schedule &amp; dealer</legend>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
                 <label class="field-label" for="sv-date">Preferred date *</label>
@@ -123,6 +123,7 @@ const summary = computed(() => [
               </div>
             </div>
             <FormDealerSelect v-model:region="form.region" v-model:dealer="form.dealer" service="Service" />
+            <p class="text-sm text-slate-500">After-sales service at each dealer is to be confirmed. The dealer will contact you to confirm your appointment.</p>
             <div>
               <label class="field-label" for="sv-notes">Notes for the service advisor</label>
               <textarea id="sv-notes" v-model="form.notes" rows="3" class="field-input" placeholder="Describe any concern, noise or warning light" />
@@ -147,13 +148,11 @@ const summary = computed(() => [
 
         <aside class="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <div class="card p-6">
-            <p class="font-display text-lg font-bold">Recommended PMS schedule</p>
-            <ul class="mt-4 divide-y divide-slate-100 text-sm">
-              <li class="flex justify-between py-2.5"><span class="text-slate-500">1,000 km</span><span class="font-medium">First check-up</span></li>
-              <li class="flex justify-between py-2.5"><span class="text-slate-500">Every 10,000 km</span><span class="font-medium">Oil & filter, inspection</span></li>
-              <li class="flex justify-between py-2.5"><span class="text-slate-500">Every 40,000 km</span><span class="font-medium">Major service</span></li>
-            </ul>
-            <p class="mt-3 text-xs text-slate-400">Or every 6 months, whichever comes first.</p>
+            <p class="font-display text-lg font-bold">Maintenance schedule</p>
+            <p class="mt-3 text-sm text-slate-600">
+              Service intervals for your model are listed in the owner’s manual and service booklet.
+              Philippine PMS schedules are to be confirmed.
+            </p>
           </div>
           <NuxtLink to="/owners/warranty" class="card flex items-center justify-between p-5 font-semibold transition hover:bg-mist">
             Warranty coverage <AppIcon name="arrow-right" class="size-4" />

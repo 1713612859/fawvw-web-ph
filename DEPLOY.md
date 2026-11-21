@@ -10,15 +10,15 @@
 
 | 项目 | 说明 | 位置 |
 |---|---|---|
-| 品牌授权 | 一汽-大众的名称、图片、车型资料需厂家书面授权 | — |
+| 品牌授权 | FAWCAR / JOYEE / BESTUNE 名称、logo、图片和车型资料（来自 fawcar.com）需中国一汽书面授权 | — |
 | 公司与联系方式 | 公司全称、地址、热线、邮箱、Messenger、Viber、社媒 | `app/data/site.ts` |
-| 经销商 | 真实门店名称、地址、电话、营业时间 | `app/data/dealers.ts` |
-| 车型数据 | 菲律宾版配置、价格、参数 | `app/data/models.ts`、`app/data/modelDetails.ts` |
-| 促销、新闻 | 真实活动和文章 | `app/data/home.ts`、`app/data/content.ts` |
+| 经销商 | 门店电话、售后/配件服务、Bulacan 详细地址（fawcar.com 上的地址不完整）、更多门店 | `app/data/dealers.ts` |
+| 车型数据 | 当前为 fawcar.com 的 GCC 版参数；菲律宾版配置、颜色如有不同需更新；网站不显示价格 | `app/data/fawcar/*.json`、`app/data/specs.ts`、`app/data/variants.ts` |
+| 促销、保修、保养 | 目前标为 "to be confirmed"，需填入真实条款 | `app/data/home.ts`、`app/data/content.ts` |
 | 表单 | 目前只显示"提交成功"，**数据不会发送**，需接入邮箱/CRM（见第 6 节） | `app/pages/get-a-quote.vue` 等 |
-| 演示标记 | 正式上线时去掉顶部 "Prototype preview" 横幅，并删除 `noindex` | `app/layouts/default.vue` 第 3 行；`nuxt.config.ts` 中 `robots` 一行 |
+| 禁止收录 | 正式上线时删除 `noindex`（不被搜索引擎收录的设置） | `nuxt.config.ts` 中 `robots` 一行 |
 
-> 演示阶段可以保留横幅和 `noindex`（不被搜索引擎收录），并加访问限制（Cloudflare 见第 2.3 节，宝塔见第 4.8 节）。
+> 演示阶段可以保留 `noindex`（不被搜索引擎收录），并加访问限制（Cloudflare 见第 2.3 节，宝塔见第 4.8 节）。
 
 ---
 
@@ -219,5 +219,5 @@ location ~* \.(webp|png|jpg|jpeg|svg|woff2)$ {
 
 - **地图**：经销商页和联系页使用 Google Maps 内嵌，在中国大陆访问时地图区域会显示空白，菲律宾访问正常。
 - **统计与广告**：如需 Google Analytics / Meta Pixel，需在用户同意 Cookie 后再加载（Cookie 横幅已有"仅必要 / 全部接受"选择）。
-- **字体**：当前为 Archivo + Inter（开源可商用）；拿到大众官方字体 VW Head / VW Text 后可在 `app/assets/css/main.css` 替换。
+- **字体**：当前为 Archivo + Inter（开源可商用）；如需更换品牌字体，可在 `app/assets/css/main.css` 替换。
 - **原始照片**：`assets-src/` 未进入 Git（仓库公开），只保存在本机，请自行备份。

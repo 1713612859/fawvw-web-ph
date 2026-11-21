@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { formatSpec, modelDetails } from '~/data/modelDetails'
-import { formatPrice } from '~/data/models'
-import { formatDate, localDateFromToday, makeReference } from '~/utils/format'
+import { summarize } from '~/data/specs'
+import { formatDate, formatPeso, localDateFromToday, makeReference } from '~/utils/format'
 
 describe('formatDate', () => {
   it('formats ISO dates in Philippine English without time-zone drift', () => {
@@ -26,18 +25,27 @@ describe('makeReference', () => {
   })
 })
 
-describe('formatPrice', () => {
+describe('formatPeso', () => {
   it('formats pesos with grouping and no decimals', () => {
-    expect(formatPrice(1398000)).toBe('₱1,398,000')
-    expect(formatPrice(22677)).toBe('₱22,677')
+    expect(formatPeso(1398000)).toBe('₱1,398,000')
+    expect(formatPeso(22677.4)).toBe('₱22,677')
   })
 })
 
-describe('formatSpec', () => {
-  it('adds grouping and units to numbers, passes text through', () => {
-    const spec = modelDetails.magotan!.spec
-    expect(formatSpec(spec, 'length', 'mm')).toBe('4,917 mm')
-    expect(formatSpec(spec, 'seats')).toBe('5')
-    expect(formatSpec(spec, 'transmission')).toBe('7-speed DSG')
+describe('summarize', () => {
+  it('turns numeric variant values into a range with a unit', () => {
+    expect(summarize(['445', '445', '565'], 'km')).toBe('445–565 km')
+    expect(summarize(['1400', '1400'], 'km')).toBe('1,400 km')
+  })
+
+  it('joins text values and skips "not available"', () => {
+    expect(summarize(['1.5T', '2.0T', '1.5T'])).toBe('1.5T / 2.0T')
+    expect(summarize(['-', '40'], 'km')).toBe('40 km')
+    expect(summarize(['Remote key\nBluetooth key'])).toBe('Remote key, Bluetooth key')
+  })
+
+  it('returns undefined when there is nothing to show', () => {
+    expect(summarize(undefined)).toBeUndefined()
+    expect(summarize(['-', '-'])).toBeUndefined()
   })
 })

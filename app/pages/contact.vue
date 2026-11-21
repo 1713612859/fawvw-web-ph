@@ -5,7 +5,7 @@ import { site } from '~/data/site'
 
 useSeoMeta({
   title: 'Contact Us',
-  description: 'Get in touch with FAW-VW Philippines by phone, e-mail, Messenger or Viber.',
+  description: 'Get in touch with FAWCAR Philippines by phone, e-mail, Messenger or Viber.',
 })
 
 const topics = ['Product inquiry', 'Sales & pricing', 'Service & maintenance', 'Parts & accessories', 'Fleet & corporate sales', 'Feedback', 'Other']

@@ -1,3 +1,14 @@
+const php = new Intl.NumberFormat('en-PH', {
+  style: 'currency',
+  currency: 'PHP',
+  maximumFractionDigits: 0,
+})
+
+// Peso amounts in the financing calculator (the site shows no vehicle prices).
+export function formatPeso(value: number) {
+  return php.format(value)
+}
+
 const dateFmt = new Intl.DateTimeFormat('en-PH', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 
 export function formatDate(iso: string) {

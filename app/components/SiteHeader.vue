@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categories, formatPrice, models } from '~/data/models'
+import { type Category, categories, models, modelsByPowertrain, powertrainLabel } from '~/data/models'
 import { ownerLinks, shoppingTools, site } from '~/data/site'
 
 type MenuKey = 'models' | 'tools' | 'owners'
@@ -17,15 +17,21 @@ const simpleLinks = [
 const modelSideLinks = [
   { label: 'All models', to: '/models' },
   { label: 'Compare models', to: '/compare' },
-  { label: 'Price list', to: '/price-list' },
   { label: 'Book a test drive', to: '/test-drive' },
 ]
+const categoryLink = (key: Category) => `/models?category=${key}`
+const countIn = (key: Category) => models.filter((m) => m.category === key).length
 
 const openMenu = ref<MenuKey | null>(null)
 const mobileOpen = ref(false)
 const mobileSection = ref<MenuKey | null>('models')
+const mobileCategory = ref<Category | null>(null)
 const scrolled = ref(false)
 const route = useRoute()
+
+// Pages with a full-screen hero (definePageMeta({ headerOverlay: true })) get a transparent
+// header over the photo, as on most carmaker sites. It turns solid once the page scrolls or a menu opens.
+const overlay = computed(() => route.meta.headerOverlay === true && !scrolled.value && !openMenu.value)
 
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 function enter(key: MenuKey) {
@@ -37,6 +43,9 @@ function leave() {
 }
 function toggleMobileSection(key: MenuKey) {
   mobileSection.value = mobileSection.value === key ? null : key
+}
+function toggleMobileCategory(key: Category) {
+  mobileCategory.value = mobileCategory.value === key ? null : key
 }
 
 watch(() => route.fullPath, () => {
@@ -80,15 +89,25 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
 <template>
   <header
     ref="headerEl"
-    class="sticky top-0 z-50 bg-white transition-shadow"
-    :class="scrolled || openMenu ? 'shadow-[0_1px_0_rgba(15,23,42,0.06),0_10px_30px_-18px_rgba(15,23,42,0.35)]' : 'shadow-[0_1px_0_rgba(15,23,42,0.06)]'"
+    class="sticky top-0 z-50 transition-[background-color,box-shadow] duration-300"
+    :class="[
+      overlay
+        ? 'bg-transparent bg-gradient-to-b from-black/50 to-transparent text-white'
+        : 'bg-white text-ink',
+      overlay
+        ? 'shadow-none'
+        : scrolled || openMenu
+          ? 'shadow-[0_1px_0_rgba(15,23,42,0.06),0_10px_30px_-18px_rgba(15,23,42,0.35)]'
+          : 'shadow-[0_1px_0_rgba(15,23,42,0.06)]',
+    ]"
+    :data-overlay="overlay ? 'true' : undefined"
   >
     <div class="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:h-20 lg:px-8">
-      <NuxtLink to="/" aria-label="FAW-VW Philippines home">
-        <BrandLogo />
+      <NuxtLink to="/" aria-label="FAWCAR Philippines home" class="shrink-0">
+        <BrandLogo compact :light="overlay" />
       </NuxtLink>
 
-      <nav class="ml-8 hidden h-full items-stretch lg:flex" aria-label="Main">
+      <nav class="ml-4 hidden h-full items-stretch lg:flex xl:ml-8" aria-label="Main">
         <div
           v-for="m in menus"
           :key="m.key"
@@ -98,8 +117,8 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
         >
           <button
             type="button"
-            class="flex items-center gap-1 px-3 text-[15px] font-semibold uppercase transition-colors hover:text-cta"
-            :class="openMenu === m.key ? 'text-cta' : 'text-ink'"
+            class="flex items-center gap-1 whitespace-nowrap px-2 text-sm font-semibold uppercase transition-colors xl:px-3 xl:text-[15px]"
+            :class="openMenu === m.key ? 'text-cta' : overlay ? 'text-white hover:text-white/75' : 'text-ink hover:text-cta'"
             :aria-expanded="openMenu === m.key"
             @click="enter(m.key)"
           >
@@ -107,7 +126,7 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
             <AppIcon name="chevron-down" class="size-4 transition-transform" :class="openMenu === m.key && 'rotate-180'" />
           </button>
           <span
-            class="absolute inset-x-3 bottom-0 h-[3px] origin-left bg-cta transition-transform duration-200"
+            class="absolute inset-x-2 bottom-0 h-[3px] origin-left bg-cta transition-transform duration-200 xl:inset-x-3"
             :class="openMenu === m.key ? 'scale-x-100' : 'scale-x-0'"
           />
         </div>
@@ -115,7 +134,8 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
           v-for="l in simpleLinks"
           :key="l.to"
           :to="l.to"
-          class="flex items-center px-3 text-[15px] font-semibold uppercase text-ink transition-colors hover:text-cta"
+          class="flex items-center whitespace-nowrap px-2 text-sm font-semibold uppercase transition-colors xl:px-3 xl:text-[15px]"
+          :class="overlay ? 'text-white hover:text-white/75' : 'text-ink hover:text-cta'"
         >
           {{ l.label }}
         </NuxtLink>
@@ -124,19 +144,21 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
       <div class="ml-auto flex items-center gap-2">
         <NuxtLink
           to="/test-drive"
-          class="mr-3 hidden text-sm font-bold uppercase text-ink transition-colors hover:text-cta xl:inline-flex"
+          class="mr-3 hidden whitespace-nowrap text-sm font-bold uppercase transition-colors 2xl:inline-flex"
+          :class="overlay ? 'text-white hover:text-white/75' : 'text-ink hover:text-cta'"
         >
           Book a Test Drive
         </NuxtLink>
         <NuxtLink
           to="/get-a-quote"
-          class="btn-primary btn-sm !hidden sm:!inline-flex"
+          class="btn-primary btn-sm !hidden whitespace-nowrap sm:!inline-flex"
         >
           Get a Quote
         </NuxtLink>
         <button
           type="button"
-          class="-mr-2 grid size-10 place-items-center text-ink hover:bg-mist lg:hidden"
+          class="-mr-2 grid size-10 place-items-center lg:hidden"
+          :class="overlay ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-mist'"
           aria-label="Open menu"
           :aria-expanded="mobileOpen"
           @click="mobileOpen = true"
@@ -155,24 +177,28 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
     >
       <div
         v-if="openMenu"
-        class="absolute inset-x-0 top-full hidden border-t border-line bg-white shadow-[0_24px_48px_-24px_rgba(0,0,0,0.35)] lg:block"
+        class="absolute inset-x-0 top-full hidden border-t border-line bg-white text-ink shadow-[0_24px_48px_-24px_rgba(0,0,0,0.35)] lg:block"
         @mouseenter="enter(openMenu)"
         @mouseleave="leave"
       >
         <div class="mx-auto max-w-7xl px-8 py-8">
           <div v-if="openMenu === 'models'" class="grid grid-cols-[1fr_220px] gap-10">
-            <div class="grid grid-cols-3 gap-8">
+            <div class="grid grid-cols-4 gap-6">
               <div v-for="c in categories" :key="c.key">
-                <p class="mb-3 font-display text-sm font-bold uppercase text-ink">{{ c.label }}</p>
+                <NuxtLink :to="categoryLink(c.key)" class="group mb-3 flex items-center gap-1.5 font-display text-sm font-bold uppercase text-ink hover:text-cta">
+                  {{ c.label }}
+                  <span class="text-xs font-semibold text-slate-400">({{ countIn(c.key) }})</span>
+                  <AppIcon name="chevron-right" class="size-3.5 opacity-40 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                </NuxtLink>
                 <ul class="space-y-1">
                   <li v-for="m in models.filter((x) => x.category === c.key)" :key="m.slug">
                     <NuxtLink :to="`/models/${m.slug}`" class="group -mx-2 flex items-center gap-3 p-2 hover:bg-mist">
-                      <div class="h-11 w-24 shrink-0 bg-gradient-to-b from-slate-50 to-slate-200/70 px-1">
+                      <div class="h-11 w-[88px] shrink-0 bg-gradient-to-b from-slate-50 to-slate-200/70 px-1">
                         <CarImage :src="m.image" alt="" :label="false" />
                       </div>
-                      <div>
-                        <p class="font-semibold text-ink group-hover:text-cta">{{ m.name }}</p>
-                        <p class="text-xs text-slate-500">From {{ formatPrice(m.priceFrom) }}</p>
+                      <div class="min-w-0">
+                        <p class="text-sm font-semibold text-ink group-hover:text-cta">{{ m.name }}</p>
+                        <p class="text-xs text-slate-500">{{ powertrainLabel(m) }}</p>
                       </div>
                     </NuxtLink>
                   </li>
@@ -203,7 +229,7 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
       </div>
     </Transition>
 
-    <!-- Mobile drawer: teleported to <body> because the header's backdrop-blur would clip a fixed child -->
+    <!-- Mobile drawer: teleported to <body> so it isn't clipped by the header -->
     <Teleport to="body">
     <Transition
       enter-active-class="transition duration-200 ease-out"
@@ -211,7 +237,7 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
       leave-active-class="transition duration-150 ease-in"
       leave-to-class="opacity-0 translate-x-4"
     >
-      <div v-if="mobileOpen" class="fixed inset-0 z-[60] flex flex-col bg-white lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+      <div v-if="mobileOpen" class="fixed inset-0 z-[60] flex flex-col bg-white text-ink lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
         <div class="flex h-16 shrink-0 items-center justify-between border-b border-slate-100 px-4 sm:px-6">
           <BrandLogo />
           <button type="button" class="-mr-2 grid size-10 place-items-center hover:bg-mist" aria-label="Close menu" @click="mobileOpen = false">
@@ -231,19 +257,43 @@ const panelLinks = computed(() => (openMenu.value === 'owners' ? ownerLinks : sh
               <AppIcon name="chevron-down" class="size-5 transition-transform" :class="mobileSection === m.key && 'rotate-180'" />
             </button>
             <div v-if="mobileSection === m.key" class="pb-4">
-              <div v-if="m.key === 'models'" class="grid grid-cols-2 gap-3">
-                <NuxtLink
-                  v-for="car in models"
-                  :key="car.slug"
-                  :to="`/models/${car.slug}`"
-                  class="border border-line p-3"
-                >
-                  <div class="aspect-[5/2]">
-                    <CarImage :src="car.image" alt="" :label="false" />
+              <!-- Models: body types (Sedans, SUVs…), each grouped by powertrain -->
+              <div v-if="m.key === 'models'">
+                <div v-for="c in categories" :key="c.key" class="border-t border-slate-100 first:border-t-0">
+                  <button
+                    type="button"
+                    class="flex w-full items-center justify-between py-3 pl-3 text-left text-base font-semibold text-brand-700"
+                    :aria-expanded="mobileCategory === c.key"
+                    @click="toggleMobileCategory(c.key)"
+                  >
+                    <span>{{ c.label }} <span class="text-sm font-normal text-slate-400">({{ countIn(c.key) }})</span></span>
+                    <AppIcon name="chevron-down" class="size-4 transition-transform" :class="mobileCategory === c.key && 'rotate-180'" />
+                  </button>
+                  <div v-if="mobileCategory === c.key" class="pb-3 pl-3">
+                    <div v-for="g in modelsByPowertrain(c.key)" :key="g.key" class="mt-1">
+                      <p class="py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-slate-400">{{ g.label }}</p>
+                      <NuxtLink
+                        v-for="car in g.models"
+                        :key="car.slug"
+                        :to="`/models/${car.slug}`"
+                        class="flex items-center gap-3 py-2"
+                      >
+                        <div class="h-9 w-[72px] shrink-0">
+                          <CarImage :src="car.image" alt="" :label="false" />
+                        </div>
+                        <span class="flex-1 text-[15px] font-medium">{{ car.name }}</span>
+                        <AppIcon name="chevron-right" class="size-4 text-slate-400" />
+                      </NuxtLink>
+                    </div>
+                    <NuxtLink :to="categoryLink(c.key)" class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-cta">
+                      View all {{ c.label }} <AppIcon name="arrow-right" class="size-3.5" />
+                    </NuxtLink>
                   </div>
-                  <p class="mt-2 text-sm font-semibold">{{ car.name }}</p>
-                  <p class="text-xs text-slate-500">From {{ formatPrice(car.priceFrom) }}</p>
-                </NuxtLink>
+                </div>
+                <div class="mt-2 flex gap-5 border-t border-slate-100 pl-3 pt-3 text-sm font-semibold">
+                  <NuxtLink to="/models" class="text-cta">All models</NuxtLink>
+                  <NuxtLink to="/compare" class="text-cta">Compare models</NuxtLink>
+                </div>
               </div>
               <ul v-else class="space-y-1">
                 <li v-for="l in m.key === 'tools' ? shoppingTools : ownerLinks" :key="l.to">

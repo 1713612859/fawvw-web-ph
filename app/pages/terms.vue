@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { companyName } from '~/data/site'
 
-useSeoMeta({ title: 'Terms of Use', description: 'Terms governing the use of the FAW-VW Philippines website.' })
+useSeoMeta({ title: 'Terms of Use', description: 'Terms governing the use of the FAWCAR Philippines website.' })
 
 const sections = [
   {
@@ -11,13 +11,13 @@ const sections = [
   {
     heading: 'Product information and prices',
     paras: [
-      'Vehicle images, specifications, features and colors shown are for illustration and may differ from models available in the Philippines. Prices are suggested retail prices, may vary by dealer and location, and are subject to change without prior notice.',
+      'Vehicle images, specifications, features and colors shown are for illustration and may differ from models available in the Philippines. Prices are quoted by authorized dealers and are subject to change without prior notice.',
       'Please confirm all details with an authorized dealer before purchase.',
     ],
   },
   {
     heading: 'Intellectual property',
-    paras: ['The Volkswagen and FAW-Volkswagen names, logos, images and content on this website are owned by their respective rights holders and may not be used without prior written permission.'],
+    paras: ['The FAWCAR, JOYEE, BESTUNE and China FAW names, logos, images and content on this website are owned by their respective rights holders and may not be used without prior written permission.'],
   },
   {
     heading: 'Online requests',

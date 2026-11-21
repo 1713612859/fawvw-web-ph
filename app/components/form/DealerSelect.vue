@@ -6,7 +6,12 @@ const region = defineModel<Region | ''>('region', { default: '' })
 const dealer = defineModel<string>('dealer', { default: '' })
 const props = withDefaults(defineProps<{ service?: 'Showroom' | 'Service' }>(), { service: 'Showroom' })
 
-const options = computed(() => (region.value ? dealersIn(region.value).filter((d) => d.services.includes(props.service)) : []))
+// While no dealer is listed for a service yet (after-sales is to be confirmed for every
+// FAWCAR retailer), offer all dealers in the region: the dealer confirms the booking.
+const listed = computed(() => dealers.some((d) => d.services.includes(props.service)))
+const options = computed(() =>
+  region.value ? dealersIn(region.value).filter((d) => !listed.value || d.services.includes(props.service)) : [],
+)
 
 watch(region, () => {
   if (!options.value.some((d) => d.id === dealer.value)) dealer.value = ''

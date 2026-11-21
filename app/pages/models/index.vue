@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { type Category, categories, models } from '~/data/models'
+import { type Category, categories, isCategory, models } from '~/data/models'
 
 useSeoMeta({
   title: 'All Models',
-  description: 'Explore every FAW-Volkswagen sedan, SUV and electrified model available in the Philippines.',
+  description: 'Explore the FAWCAR line-up of JOYEE and BESTUNE sedans, SUVs, MPV and city cars: electric, hybrid and gasoline.',
 })
 
 const tabs: { key: Category | 'all'; label: string }[] = [{ key: 'all', label: 'All models' }, ...categories]
 const tab = ref<Category | 'all'>('all')
+
+// /models?category=suv opens that tab (menu and footer links). Read after mount so the
+// prerendered page (all models) hydrates cleanly, and again when the menu changes the query.
+const route = useRoute()
+const fromQuery = () => {
+  const c = route.query.category
+  tab.value = isCategory(c) ? c : 'all'
+}
+onMounted(fromQuery)
+watch(() => route.query.category, fromQuery)
 const list = computed(() => (tab.value === 'all' ? models : models.filter((m) => m.category === tab.value)))
 </script>
 
@@ -15,8 +25,8 @@ const list = computed(() => (tab.value === 'all' ? models : models.filter((m) =>
   <div>
     <PageHeader
       eyebrow="The line-up"
-      title="Find your Volkswagen"
-      intro="Sedans, SUVs and electrified models, engineered to Volkswagen standards and built by FAW-Volkswagen."
+      title="Find your FAWCAR"
+      intro="JOYEE new-energy models and BESTUNE cars from China FAW: sedans, SUVs, an MPV and city cars, electric, hybrid and gasoline."
       :crumbs="[{ label: 'Models' }]"
     />
 
@@ -46,14 +56,13 @@ const list = computed(() => (tab.value === 'all' ? models : models.filter((m) =>
       <div class="mt-12 flex flex-col items-start justify-between gap-4 bg-mist p-6 sm:flex-row sm:items-center sm:p-8">
         <div>
           <h2 class="font-display text-xl font-bold">Not sure which one fits?</h2>
-          <p class="mt-1 text-sm text-slate-500">Compare specs side by side, or check the latest prices for every variant.</p>
+          <p class="mt-1 text-sm text-slate-500">Compare specs side by side, or ask a dealer for prices and availability.</p>
         </div>
         <div class="flex flex-wrap gap-3">
           <NuxtLink to="/compare" class="btn-primary">Compare models</NuxtLink>
-          <NuxtLink to="/price-list" class="btn-outline">Price list</NuxtLink>
+          <NuxtLink to="/get-a-quote" class="btn-outline">Get a quote</NuxtLink>
         </div>
       </div>
-      <p class="mt-6 text-xs text-slate-400">*Suggested retail prices. Prices may vary by dealer and location and are subject to change without prior notice.</p>
     </section>
   </div>
 </template>

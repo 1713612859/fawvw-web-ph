@@ -6,10 +6,5 @@ export function monthlyPayment(principal: number, annualRatePct: number, months:
   return (principal * r) / (1 - (1 + r) ** -months)
 }
 
-// Defaults used for "from ₱X / month" teasers across the site.
+// Starting values of the financing calculator.
 export const financeDefaults = { downPct: 20, months: 60, rate: 8 }
-
-export function teaserMonthly(price: number) {
-  const { downPct, months, rate } = financeDefaults
-  return monthlyPayment(price * (1 - downPct / 100), rate, months)
-}

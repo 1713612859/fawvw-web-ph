@@ -12,14 +12,14 @@ async function fillContact(page: import('@playwright/test').Page) {
 
 test('test drive: prefill, date limits, required license, success', async ({ page, problems }) => {
   void problems
-  await open(page, '/test-drive?model=id-aura-t6&dealer=cebu')
-  await expect(page.locator('#td-model')).toHaveValue('id-aura-t6')
-  await expect(page.locator('#region')).toHaveValue('visayas')
-  await expect(page.locator('#dealer')).toHaveValue('cebu')
+  await open(page, '/test-drive?model=joyee-s08&dealer=angeles')
+  await expect(page.locator('#td-model')).toHaveValue('joyee-s08')
+  await expect(page.locator('#region')).toHaveValue('luzon')
+  await expect(page.locator('#dealer')).toHaveValue('angeles')
   await expect(page.locator('#td-date')).toHaveAttribute('min', localDateFromToday(1))
 
   // Empty submit is blocked
-  await page.locator('#td-model').selectOption('magotan')
+  await page.locator('#td-model').selectOption('bestune-t90')
   await page.getByRole('button', { name: 'Book my test drive' }).click()
   expect(await page.evaluate(isInvalid('#td-date'))).toBe(true)
 
@@ -37,22 +37,23 @@ test('test drive: prefill, date limits, required license, success', async ({ pag
   const success = page.getByRole('status')
   await expect(success).toContainText('Your test drive request is booked.')
   await expect(success).toContainText(/TD-[A-Z0-9]{6}/)
-  await expect(success).toContainText('Magotan')
-  await expect(success).toContainText('FAW-VW Cebu')
+  await expect(success).toContainText('BESTUNE T90')
+  await expect(success).toContainText('FAWCAR Angeles')
 })
 
-test('service booking: service centers only, plate and mileage required, success', async ({ page, problems }) => {
+test('service booking: dealer list, plate and mileage required, success', async ({ page, problems }) => {
   void problems
   await open(page, '/owners/service')
-  await page.locator('#sv-model').selectOption('sagitar')
+  await page.locator('#sv-model').selectOption('joyee-s04')
   await page.locator('#sv-plate').fill('nbc 1234')
   await page.locator('#sv-mileage').fill('20500')
   await page.locator('#sv-type').selectOption('Preventive maintenance (PMS)')
   await page.locator('#sv-date').fill(localDateFromToday(2))
   await page.locator('#sv-slot').selectOption({ index: 1 })
   await page.locator('#region').selectOption('ncr')
-  await expect(page.locator('#dealer option:not([disabled])')).toHaveCount(3)
-  await page.locator('#dealer').selectOption('alabang')
+  // No dealer is confirmed for after-sales yet, so every dealer in the region is offered.
+  await expect(page.locator('#dealer option:not([disabled])')).toHaveText(['FAWCAR Manila (Caloocan)'])
+  await page.locator('#dealer').selectOption('caloocan')
   await fillContact(page)
   await page.getByRole('button', { name: 'Request appointment' }).click()
   await expect(page.getByRole('status')).toHaveCount(0)
@@ -63,7 +64,7 @@ test('service booking: service centers only, plate and mileage required, success
   await expect(success).toContainText('Your service appointment is requested.')
   await expect(success).toContainText(/SV-[A-Z0-9]{6}/)
   await expect(success).toContainText('NBC 1234')
-  await expect(success).toContainText('FAW-VW Alabang')
+  await expect(success).toContainText('FAWCAR Manila (Caloocan)')
 })
 
 test('contact form: message length check and success', async ({ page, problems }) => {

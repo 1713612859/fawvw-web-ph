@@ -9,7 +9,7 @@ import { promoPhotos } from '~/data/media'
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
           <h2 class="h-section uppercase">Promos &amp; offers</h2>
-          <p class="mt-3 text-[#444]">Make your next Volkswagen easier to own.</p>
+          <p class="mt-3 text-[#444]">Make your next FAWCAR easier to own. Program details to be confirmed.</p>
         </div>
         <NuxtLink to="/promos" class="btn-dark btn-sm">View all</NuxtLink>
       </div>

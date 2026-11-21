@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Home hero in the BYD Philippines style: full-bleed official photo, centred tags/title/buttons,
+// Home hero: full-screen photo under the transparent header, centred tags/title/buttons,
 // and model tabs along the bottom. Autoplays; pauses on hover.
 import { heroSlides } from '~/data/home'
 import { media } from '~/data/media'
@@ -7,7 +7,7 @@ import { findModel } from '~/data/models'
 
 const slides = heroSlides.map((s) => {
   const model = findModel(s.model)!
-  return { ...s, model, photo: media[model.slug]?.hero }
+  return { ...s, model, photo: media[model.slug]!.hero }
 })
 const INTERVAL = 6500
 
@@ -63,7 +63,7 @@ function onTouchEnd(e: TouchEvent) {
 
 <template>
   <section
-    class="relative isolate h-[min(calc(100svh-6.5rem),760px)] min-h-[600px] overflow-hidden bg-carbon text-white"
+    class="relative isolate h-[min(100svh,900px)] min-h-[640px] overflow-hidden bg-carbon text-white"
     aria-roledescription="carousel"
     aria-label="Featured models"
     @mouseenter="hovering = true"
@@ -81,29 +81,24 @@ function onTouchEnd(e: TouchEvent) {
       :aria-label="`${i + 1} of ${slides.length}: ${s.model.name}`"
       :aria-hidden="i !== current"
     >
-      <template v-if="s.photo">
-        <img
-          v-if="loaded.has(i)"
-          :src="s.photo.src"
-          :alt="s.photo.alt"
-          :fetchpriority="i === 0 ? 'high' : 'low'"
-          decoding="async"
-          class="absolute inset-0 -z-20 h-full w-full object-cover"
-        >
-      </template>
-      <div v-else class="absolute inset-0 -z-20 flex items-end justify-center bg-[radial-gradient(ellipse_at_50%_60%,#2b2f36,#121212_70%)] pb-[16%]">
-        <div class="aspect-[79/29] w-[70%] max-w-3xl"><CarImage :src="s.model.image" :alt="s.model.name" /></div>
-      </div>
+      <img
+        v-if="loaded.has(i)"
+        :src="s.photo.src"
+        :alt="s.photo.alt"
+        :fetchpriority="i === 0 ? 'high' : 'low'"
+        decoding="async"
+        class="absolute inset-0 -z-20 h-full w-full object-cover"
+      >
       <div class="absolute inset-0 -z-10 bg-black/45" aria-hidden="true" />
       <div class="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true" />
 
       <div
-        class="container-x flex h-full flex-col items-center justify-center pb-24 text-center transition duration-700"
+        class="container-x flex h-full flex-col items-center justify-center pb-24 pt-16 text-center transition duration-700 lg:pt-20"
         :class="i === current ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'"
       >
         <div class="flex flex-wrap justify-center gap-2">
           <span class="tag">{{ s.eyebrow }}</span>
-          <span class="tag">{{ s.model.badges[0] }}</span>
+          <span class="tag">{{ s.model.body }}</span>
         </div>
         <component :is="i === 0 ? 'h1' : 'h2'" class="mt-5 font-display text-[2.6rem] font-bold leading-none sm:text-[3.25rem] lg:text-[4rem]">
           {{ s.model.name }}
@@ -126,21 +121,22 @@ function onTouchEnd(e: TouchEvent) {
       </div>
     </div>
 
-    <!-- Model tabs -->
+    <!-- Slide picker: model tabs from sm, dots on phones -->
     <div class="absolute inset-x-0 bottom-0 z-20">
-      <div class="container-x flex items-stretch justify-center">
+      <div class="container-x flex items-stretch justify-center pb-3 sm:pb-0">
         <button
           v-for="(s, i) in slides"
           :key="s.model.slug"
           type="button"
-          class="relative w-full max-w-[160px] px-2 py-4 text-center text-sm font-bold leading-tight transition sm:text-[15px]"
-          :class="i === current ? 'bg-white/25 text-white' : 'text-white/60 hover:text-white'"
+          class="relative grid h-11 w-8 place-items-center text-center font-bold leading-tight transition sm:block sm:h-auto sm:w-full sm:max-w-[160px] sm:px-2 sm:py-4 sm:text-[15px]"
+          :class="i === current ? 'text-white sm:bg-white/25' : 'text-white/60 hover:text-white'"
           :aria-label="`Show ${s.model.name}`"
           :aria-current="i === current"
           @click="go(i)"
         >
-          {{ s.model.name }}
-          <span v-if="i === current" class="absolute inset-x-0 bottom-0 h-[3px] bg-white/30">
+          <span class="block h-1.5 rounded-full transition-all duration-300 sm:hidden" :class="i === current ? 'w-6 bg-white' : 'w-1.5 bg-white/50'" />
+          <span class="hidden sm:inline">{{ s.model.name }}</span>
+          <span v-if="i === current" class="absolute inset-x-0 bottom-0 hidden h-[3px] bg-white/30 sm:block">
             <span class="block h-full origin-left bg-white" :style="{ transform: `scaleX(${progress})` }" />
           </span>
         </button>

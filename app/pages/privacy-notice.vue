@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { companyName } from '~/data/site'
 
-useSeoMeta({ title: 'Privacy Notice', description: 'How FAW-VW Philippines collects, uses and protects your personal data under the Data Privacy Act of 2012.' })
+useSeoMeta({ title: 'Privacy Notice', description: 'How FAWCAR Philippines collects, uses and protects your personal data under the Data Privacy Act of 2012.' })
 
 const sections = [
   {

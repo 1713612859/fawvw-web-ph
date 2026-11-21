@@ -5,7 +5,7 @@ import { promoPhotos } from '~/data/media'
 
 useSeoMeta({
   title: 'Promos & Offers',
-  description: 'Current FAW-VW Philippines promos: low down payment financing, free PMS packages and trade-in bonuses.',
+  description: 'FAWCAR Philippines programs: low down payment financing, free PMS packages and trade-in bonuses. Details to be confirmed.',
 })
 
 </script>
@@ -15,7 +15,7 @@ useSeoMeta({
     <PageHeader
       eyebrow="Offers & programs"
       title="Promos & Offers"
-      intro="Make your next Volkswagen easier to own with these limited-time programs, available at participating dealers nationwide."
+      intro="Make your next FAWCAR easier to own. Program details are to be confirmed: ask a participating dealer."
       :crumbs="[{ label: 'Promos & Offers' }]"
     />
 

@@ -3,7 +3,7 @@ import { news } from '~/data/content'
 
 useSeoMeta({
   title: 'News & Events',
-  description: 'Latest news, events and stories from FAW-VW Philippines.',
+  description: 'Launches, events and news from FAWCAR and the JOYEE and BESTUNE line-up.',
 })
 </script>
 
@@ -12,7 +12,7 @@ useSeoMeta({
     <PageHeader
       eyebrow="Newsroom"
       title="News & Events"
-      intro="Launches, events and stories from the road."
+      intro="Launches and events from FAWCAR in the Philippines and across Southeast Asia."
       :crumbs="[{ label: 'News & Events' }]"
     />
     <section class="container-x py-12 sm:py-16">

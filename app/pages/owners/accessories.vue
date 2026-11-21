@@ -3,7 +3,7 @@ import { accessories } from '~/data/content'
 
 useSeoMeta({
   title: 'Genuine Accessories',
-  description: 'Personalize and protect your Volkswagen with genuine accessories, fitted by authorized dealers.',
+  description: 'Personalize and protect your FAWCAR with genuine accessories, fitted by authorized dealers.',
 })
 </script>
 
@@ -12,7 +12,7 @@ useSeoMeta({
     <PageHeader
       eyebrow="Owners"
       title="Genuine Accessories"
-      intro="Designed for your Volkswagen, tested to the same standards, and fitted by our technicians."
+      intro="Accessories for your JOYEE or BESTUNE, fitted by authorized dealers. Availability per model is to be confirmed."
       :crumbs="[{ label: 'Owners' }, { label: 'Genuine Accessories' }]"
     />
 

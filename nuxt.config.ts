@@ -12,15 +12,16 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
-      titleTemplate: '%s | FAW-VW Philippines',
+      titleTemplate: '%s | FAWCAR Philippines',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#001E50' },
+        { name: 'theme-color', content: '#0D2A8F' },
         // Prototype only: keep demo deployments out of search results until launch.
         { name: 'robots', content: 'noindex, nofollow' },
       ],
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
     },
   },

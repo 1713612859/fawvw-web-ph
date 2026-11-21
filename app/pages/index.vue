@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { media } from '~/data/media'
+// The header sits transparent over the full-screen hero (see SiteHeader).
+definePageMeta({ headerOverlay: true })
 
 useSeoMeta({
-  title: 'German Engineering, Built by FAW-Volkswagen',
-  description: 'Explore FAW-Volkswagen sedans, SUVs and electrified models in the Philippines. Get a quote, book a test drive and find your nearest dealer.',
-  ogTitle: 'FAW-VW Philippines',
-  ogDescription: 'Explore the FAW-Volkswagen line-up in the Philippines.',
+  title: 'JOYEE and BESTUNE Cars from China FAW',
+  description: 'Explore FAWCAR electric, hybrid and gasoline cars in the Philippines: JOYEE N09, S08, S04 and the BESTUNE line-up. Get a quote, book a test drive and find your nearest dealer.',
+  ogTitle: 'FAWCAR Philippines',
+  ogDescription: 'Explore the JOYEE and BESTUNE line-up from China FAW in the Philippines.',
   ogType: 'website',
 })
 </script>
@@ -17,6 +18,6 @@ useSeoMeta({
     <HomeBrandSection />
     <HomePromoSection />
     <HomeNewsSection />
-    <CtaTiles :photo="media.tayron?.hero?.src" />
+    <HomeLeadForm />
   </div>
 </template>

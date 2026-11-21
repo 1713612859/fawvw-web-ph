@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { type DealerService, type Region, dealers, directionsUrl, mapEmbedUrl, regions } from '~/data/dealers'
+import { site } from '~/data/site'
 
 useSeoMeta({
   title: 'Find a Dealer',
-  description: 'Find an FAW-VW showroom or service center near you in Metro Manila, Luzon, Visayas and Mindanao.',
+  description: 'Find an authorized FAWCAR dealer in the Philippines: showrooms in Metro Manila, Pampanga and Bulacan.',
 })
+
+const serviceLabels: Record<DealerService, string> = { Showroom: 'Showroom (sales)', Service: 'Service center', Parts: 'Parts' }
+// The service filter only appears once dealers offer more than one kind of service.
+const serviceOptions = (Object.keys(serviceLabels) as DealerService[]).filter((s) => dealers.some((d) => d.services.includes(s)))
 
 const region = ref<Region | ''>('')
 const service = ref<DealerService | ''>('')
@@ -24,7 +29,7 @@ watch(list, (l) => {
     <PageHeader
       eyebrow="Dealer network"
       title="Find a Dealer"
-      intro="Showrooms and service centers across Metro Manila, Luzon, Visayas and Mindanao."
+      intro="Authorized FAWCAR retailers in the Philippines, as listed on fawcar.com. More locations to follow."
       :crumbs="[{ label: 'Find a Dealer' }]"
     />
 
@@ -34,11 +39,9 @@ watch(list, (l) => {
           <option value="">All regions</option>
           <option v-for="r in regions" :key="r.key" :value="r.key">{{ r.label }}</option>
         </select>
-        <select v-model="service" class="field-input sm:max-w-xs" aria-label="Filter by service">
-          <option value="">Showroom &amp; service</option>
-          <option value="Showroom">Showroom (sales)</option>
-          <option value="Service">Service center</option>
-          <option value="Parts">Parts</option>
+        <select v-if="serviceOptions.length > 1" v-model="service" class="field-input sm:max-w-xs" aria-label="Filter by service">
+          <option value="">All services</option>
+          <option v-for="s in serviceOptions" :key="s" :value="s">{{ serviceLabels[s] }}</option>
         </select>
         <p class="self-center text-sm text-slate-500 sm:ml-auto">{{ list.length }} {{ list.length === 1 ? 'location' : 'locations' }}</p>
       </div>
@@ -64,10 +67,14 @@ watch(list, (l) => {
                   <span v-for="s in d.services" :key="s" class="bg-[#ececec] px-2 py-1 text-[11px] font-bold uppercase text-ink">{{ s }}</span>
                 </div>
               </div>
+              <p v-if="d.note" class="mt-1 pl-6 text-sm text-slate-500">{{ d.note }}</p>
               <p class="mt-2 text-sm text-slate-500">{{ d.hours }}</p>
+              <p v-if="!d.phone" class="mt-1 text-sm text-slate-500">
+                Phone to be confirmed. Call our hotline <a :href="site.hotlineHref" class="font-semibold text-cta">{{ site.hotline }}</a>
+              </p>
               <div class="mt-4 flex flex-wrap gap-2" @click.stop>
                 <a :href="directionsUrl(d.address)" target="_blank" rel="noopener" class="btn-outline !px-4 !py-2">Directions</a>
-                <a :href="`tel:${d.phone.replace(/\s/g, '')}`" class="btn-outline !px-4 !py-2"><AppIcon name="phone" class="size-4" /> Call</a>
+                <a v-if="d.phone" :href="`tel:${d.phone.replace(/\s/g, '')}`" class="btn-outline !px-4 !py-2"><AppIcon name="phone" class="size-4" /> Call</a>
                 <NuxtLink :to="`/test-drive?dealer=${d.id}`" class="btn-primary !px-4 !py-2">Book a test drive</NuxtLink>
               </div>
             </div>

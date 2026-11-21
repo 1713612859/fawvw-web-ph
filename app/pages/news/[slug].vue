@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatDate } from '~/utils/format'
-import { news } from '~/data/content'
+import { news, newsCover } from '~/data/content'
 import { findModel } from '~/data/models'
 
 const route = useRoute()
@@ -9,13 +9,14 @@ if (!article) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 const model = findModel(article.model)
+const cover = newsCover(article)
 const more = news.filter((n) => n.slug !== article.slug)
 
 useSeoMeta({
   title: article.title,
   description: article.excerpt,
   ogType: 'article',
-  ogImage: model?.image,
+  ogImage: cover.src,
 })
 </script>
 
@@ -30,12 +31,14 @@ useSeoMeta({
 
     <article class="container-x py-12 sm:py-16">
       <div class="mx-auto max-w-3xl">
-        <div v-if="model" class="aspect-[16/8] bg-gradient-to-br from-sky-100 via-slate-50 to-white px-8 py-6">
-          <CarImage :src="model.image" :alt="model.name" :label="false" eager />
-        </div>
+        <img :src="cover.src" :alt="cover.alt" class="aspect-[16/9] w-full bg-mist object-cover" fetchpriority="high">
         <div class="prose-page mt-10">
           <p v-for="(para, i) in article.body" :key="i" class="text-lg" :class="i === 0 && '!text-ink'">{{ para }}</p>
         </div>
+        <p class="mt-8 border-t border-line pt-6 text-sm text-[#666]">
+          Summarized from the FAWCAR announcement.
+          <a :href="article.source" target="_blank" rel="noopener" class="font-semibold text-cta underline underline-offset-2 hover:no-underline">Read the original on fawcar.com</a>
+        </p>
         <div v-if="model" class="mt-12 flex flex-col items-start justify-between gap-4 bg-mist p-6 sm:flex-row sm:items-center">
           <div>
             <p class="text-sm text-slate-500">Featured in this story</p>
