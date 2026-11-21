@@ -97,15 +97,20 @@ test.describe('mobile header', () => {
     await expect(drawer).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('hidden')
     // Models section is open by default with one row per body type; each opens its models,
-    // grouped by powertrain.
+    // grouped by powertrain. One body type is open at a time.
+    const categoryRow = (label: string) => drawer.getByRole('button', { name: new RegExp(`^${label} \\(`) })
+    let previous: (typeof categories)[number] | undefined
     for (const c of categories) {
-      const row = drawer.getByRole('button', { name: new RegExp(`^${c.label} \\(`) })
+      const row = categoryRow(c.label)
       await row.click()
       await expect(row).toHaveAttribute('aria-expanded', 'true')
+      if (previous) await expect(categoryRow(previous.label)).toHaveAttribute('aria-expanded', 'false')
       for (const m of models.filter((x) => x.category === c.key)) {
         await expect(drawer.getByRole('link', { name: m.name, exact: true })).toBeVisible()
       }
+      previous = c
     }
+    await categoryRow(categories.find((c) => c.key === 'suv')!.label).click()
     await drawer.getByRole('link', { name: 'JOYEE S04', exact: true }).click()
     await expect(page).toHaveURL(/\/models\/joyee-s04$/)
     await expect(drawer).toBeHidden()
