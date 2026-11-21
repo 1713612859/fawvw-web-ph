@@ -1,6 +1,4 @@
 // Home page content: hero slides, promos (to be confirmed) and brand facts from fawcar.com.
-import { findModel } from './models'
-
 export { news } from './content'
 
 export interface HeroSlide {
@@ -10,10 +8,9 @@ export interface HeroSlide {
   copy: string
 }
 
-// The home page shows the new-energy models only (client request, November 2026): the
-// carousel, the line-up cards and the lead form's model picker all use these, in line-up
-// order (the unit tests check it). BESTUNE B70, T90, T77 and M9 are on /models and in the
-// menus. Figures are from each model's fawcar.com specification sheet.
+// The home carousel shows the new-energy models only (client request, November 2026), in
+// line-up order (the unit tests check it). Everything else, the home line-up cards and lead
+// form included, lists every model. Figures are from each model's fawcar.com spec sheet.
 export const heroSlides: HeroSlide[] = [
   {
     model: 'joyee-n01',
@@ -46,8 +43,6 @@ export const heroSlides: HeroSlide[] = [
     copy: 'A three-door electric city car with 222 km of CLTC range, rear-wheel drive and a two-tone macaron finish.',
   },
 ]
-
-export const homeModels = heroSlides.map((s) => findModel(s.model)!)
 
 export interface Promo {
   slug: string

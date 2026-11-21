@@ -1,4 +1,4 @@
-import { heroSlides, homeModels, promos } from '../../app/data/home'
+import { heroSlides, promos } from '../../app/data/home'
 import { media } from '../../app/data/media'
 import { dealers } from '../../app/data/dealers'
 import { findModel, models } from '../../app/data/models'
@@ -40,11 +40,13 @@ test('hero carousel: buttons, slide picker and autoplay', async ({ page, problem
   await expect(page).toHaveURL(new RegExp(`/models/${heroSlides[last]!.model}$`))
 })
 
-test('line-up cards show the home page models in order, and View all opens every model', async ({ page, problems }) => {
+test('line-up cards show every model in order, and View all opens the models page', async ({ page, problems }) => {
   void problems
   await open(page, '/')
+  // The carousel has the new-energy models only; the cards below list the whole line-up.
+  await expect(page.getByRole('region', { name: 'Featured models' }).locator('button[aria-label^="Show"]')).toHaveCount(heroSlides.length)
   const section = page.locator('#models')
-  await expect(section.locator('article h3')).toHaveText(homeModels.map((m) => m.name))
+  await expect(section.locator('article h3')).toHaveText(models.map((m) => m.name))
   await section.getByRole('link', { name: 'View all models' }).click()
   await expect(page).toHaveURL(/\/models$/)
   await expect(page.locator('main article')).toHaveCount(models.length)
@@ -70,8 +72,8 @@ test('home lead form: request type, model picker, dealer, confirmation', async (
 
   await section.getByText('Get a quote', { exact: true }).click()
   await expect(section.getByRole('button', { name: 'Request my quote' })).toBeVisible()
-  // Only the home page models are offered; picking one shows its photo.
-  await expect(section.locator('input[name="lead-model"]')).toHaveCount(homeModels.length)
+  // Every model is offered; picking one shows its photo.
+  await expect(section.locator('input[name="lead-model"]')).toHaveCount(models.length)
   await section.locator('label').filter({ hasText: 'JOYEE S08' }).click()
   await expect(section.getByRole('img', { name: 'JOYEE S08' })).toBeVisible()
 

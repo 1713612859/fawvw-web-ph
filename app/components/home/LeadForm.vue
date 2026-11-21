@@ -2,11 +2,9 @@
 // "How can we help you?" lead form at the bottom of the home page, as on most carmaker sites:
 // pick what you need (test drive, quote, information) and a model, leave your details and a
 // dealer, and the dealer calls back. Not yet connected to the dealer system (demo confirmation).
-// Offers the home page models only; every model can be picked on /get-a-quote and /test-drive.
 import type { Region } from '~/data/dealers'
 import { dealers } from '~/data/dealers'
-import { homeModels } from '~/data/home'
-import { findModel, powertrainLabel } from '~/data/models'
+import { findModel, models, powertrainLabel } from '~/data/models'
 import { makeReference } from '~/utils/format'
 
 const interests = [
@@ -18,7 +16,7 @@ type Interest = (typeof interests)[number]['value']
 
 const form = reactive({
   interest: 'test-drive' as Interest,
-  model: homeModels[0]!.slug,
+  model: models[0]!.slug,
   region: '' as Region | '',
   dealer: '',
   firstName: '',
@@ -104,7 +102,7 @@ const summary = computed(() => [
             <legend class="field-label">Model *</legend>
             <div class="flex flex-wrap gap-2">
               <label
-                v-for="m in homeModels"
+                v-for="m in models"
                 :key="m.slug"
                 class="flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm font-semibold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-cta"
                 :class="form.model === m.slug ? 'border-cta bg-white text-cta' : 'border-line bg-white text-ink hover:border-slate-400'"

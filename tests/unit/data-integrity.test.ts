@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { accessories, faqs, news, newsCover, warranty } from '~/data/content'
 import { dealers, regions } from '~/data/dealers'
-import { brandStats, heroSlides, homeModels, promos } from '~/data/home'
+import { brandStats, heroSlides, promos } from '~/data/home'
 import { colorImage, media, promoPhotos } from '~/data/media'
 import { modelDetails } from '~/data/modelDetails'
 import { categories, models, modelsByPowertrain } from '~/data/models'
@@ -177,12 +177,11 @@ describe('model pages', () => {
 })
 
 describe('home and editorial content', () => {
-  it('home page shows the new-energy models only, in line-up order', () => {
+  it('home carousel shows the new-energy models only, in line-up order', () => {
     expect(heroSlides.map((s) => s.model)).toEqual(['joyee-n01', 'joyee-n09', 'joyee-s08', 'joyee-s04', 'bestune-xiaoma'])
-    expect(homeModels.map((m) => m.slug)).toEqual(heroSlides.map((s) => s.model))
     const order = heroSlides.map((s) => slugs.indexOf(s.model))
     expect(order).toEqual([...order].sort((a, b) => a - b))
-    for (const m of homeModels) expect(m.powertrains).not.toContain('Gasoline')
+    for (const s of heroSlides) expect(models.find((m) => m.slug === s.model)!.powertrains).not.toContain('Gasoline')
   })
 
   it('news items point to real models', () => {

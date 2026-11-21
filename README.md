@@ -23,8 +23,9 @@ headless CMS without changing the pages.
   original announcement on fawcar.com.
 - **Line-up order**: the order of `models` in `app/data/models.ts` (set by the distributor) is used
   everywhere: menus (body types and powertrain groups follow the first-listed model), footer,
-  model pages and forms. BESTUNE B70S is not sold in the Philippines and is not included. The
-  home page shows only the new-energy models listed in `heroSlides` (`app/data/home.ts`).
+  model pages, forms and the home line-up cards. BESTUNE B70S is not sold in the Philippines and
+  is not included. The home carousel shows only the new-energy models listed in `heroSlides`
+  (`app/data/home.ts`).
 - **Dealers**: the three Philippine retailers listed on fawcar.com (`app/data/dealers.ts`).
   Contact persons and mobile numbers listed there are not published until the dealers confirm.
 
@@ -81,7 +82,7 @@ End-to-end tests run on desktop (1440×900) and mobile (Pixel 7) against the gen
 
 - every internal link resolves; every page renders with no console errors, broken images or sideways scrolling
 - header mega menu, mobile drawer, floating contact, cookie banner, footer
-- home page: hero carousel, new-energy line-up cards and lead form (5 models), promos
+- home page: hero carousel (new-energy models only), line-up cards and lead form (every model), promos
 - all 9 model pages (variants, spec groups, source link, no prices), section nav, colour picker,
   spec "differences only", variant → quote prefill, gallery loading
 - Get a Quote (3 steps), Test Drive, Service booking and Contact forms: validation and confirmation
