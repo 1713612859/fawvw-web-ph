@@ -34,7 +34,6 @@ const tidy = (s: string) =>
 
 // fawcar.com copy that is cut off mid-sentence, finished here.
 const copyFixes: Record<string, Partial<Record<'design' | 'interior', string>>> = {
-  'bestune-b70s': { interior: 'Built with the “sleek, lightweight floating” design philosophy.' },
   'joyee-n01': {
     design: 'Comfortable living space, a versatile interior and a five-door design.',
     interior: 'A 10.1-inch central screen with a lively, customizable interactive desktop.',
@@ -123,7 +122,6 @@ const colors: Record<string, Swatch[]> = {
     { name: 'Yellow', hex: '#e9b200' },
     { name: 'Brown', hex: '#7a5532' },
   ],
-  'bestune-b70s': [{ name: 'Midnight Black', hex: '#26272a' }],
   'bestune-m9': [{ name: 'Quantum Silver Gray', hex: '#8f8a91' }],
   'bestune-xiaoma': [
     { name: 'Blue / White two-tone', hex: '#7cc4ea' },

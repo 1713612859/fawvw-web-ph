@@ -8,7 +8,6 @@ export const variantNames: Record<string, string[]> = {
   'bestune-b70': ['1.5T Standard', '1.5T Luxury', '1.5T Premium', '2.0T Luxury'],
   'bestune-t90': ['1.5T Standard', '1.5T Premium', '2.0T Standard', '2.0T Premium', '2.0T Luxury'],
   'bestune-t77': ['1.5T Standard', '1.5T Premium', '1.5T Luxury'],
-  'bestune-b70s': ['1.5T Premium', '2.0T Premium', '1.5T Luxury', '2.0T Luxury'],
   'bestune-m9': ['2.0T Premium', '2.0T Luxury'],
   'bestune-xiaoma': ['222 km Standard', '222 km Premium'],
 }

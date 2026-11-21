@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { accessories, faqs, news, newsCover, warranty } from '~/data/content'
 import { dealers, regions } from '~/data/dealers'
-import { brandStats, heroSlides, promos } from '~/data/home'
+import { brandStats, heroSlides, homeModels, promos } from '~/data/home'
 import { colorImage, media, promoPhotos } from '~/data/media'
 import { modelDetails } from '~/data/modelDetails'
 import { categories, models, modelsByPowertrain } from '~/data/models'
@@ -38,9 +38,30 @@ describe('models', () => {
     expect([...listed].sort()).toEqual([...slugs].sort())
   })
 
-  it('are exactly the models with a fawcar.com spec sheet (no BESTUNE NAT)', () => {
+  it('follow the distributor’s line-up order', () => {
+    expect(slugs).toEqual([
+      'joyee-n01', 'joyee-n09', 'joyee-s08', 'joyee-s04', 'bestune-xiaoma',
+      'bestune-b70', 'bestune-t90', 'bestune-t77', 'bestune-m9',
+    ])
+  })
+
+  it('keep the line-up order in the menus: body types and powertrain groups by first-listed model', () => {
+    expect(categories.map((c) => c.key)).toEqual([...new Set(models.map((m) => m.category))])
+    for (const c of categories) {
+      const inCategory = models.filter((m) => m.category === c.key)
+      const grouped = modelsByPowertrain(c.key)
+      expect(grouped[0]!.models[0]).toBe(inCategory[0])
+      // Within a group, models keep their line-up order.
+      for (const g of grouped) {
+        const order = g.models.map((m) => inCategory.indexOf(m))
+        expect(order).toEqual([...order].sort((a, b) => a - b))
+      }
+    }
+  })
+
+  it('are exactly the models with a fawcar.com spec sheet (no BESTUNE NAT or B70S)', () => {
     expect([...slugs].sort()).toEqual(Object.keys(sources).sort())
-    expect(slugs.some((s) => s.includes('nat'))).toBe(false)
+    expect(slugs.some((s) => s.includes('nat') || s === 'bestune-b70s')).toBe(false)
   })
 
   it.each(models.map((m) => [m.slug, m] as const))('%s has a cut-out photo on disk', (_, m) => {
@@ -156,8 +177,15 @@ describe('model pages', () => {
 })
 
 describe('home and editorial content', () => {
-  it('hero slides and news point to real models', () => {
-    for (const s of heroSlides) expect(slugs).toContain(s.model)
+  it('home page shows the new-energy models only, in line-up order', () => {
+    expect(heroSlides.map((s) => s.model)).toEqual(['joyee-n01', 'joyee-n09', 'joyee-s08', 'joyee-s04', 'bestune-xiaoma'])
+    expect(homeModels.map((m) => m.slug)).toEqual(heroSlides.map((s) => s.model))
+    const order = heroSlides.map((s) => slugs.indexOf(s.model))
+    expect(order).toEqual([...order].sort((a, b) => a - b))
+    for (const m of homeModels) expect(m.powertrains).not.toContain('Gasoline')
+  })
+
+  it('news items point to real models', () => {
     for (const n of news) expect(slugs).toContain(n.model)
   })
 

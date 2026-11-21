@@ -1,10 +1,9 @@
-import { heroSlides, promos } from '../../app/data/home'
+import { heroSlides, homeModels, promos } from '../../app/data/home'
 import { media } from '../../app/data/media'
 import { dealers } from '../../app/data/dealers'
 import { findModel, models } from '../../app/data/models'
 import { expect, test, open } from './helpers'
 
-const inHero = new Set(heroSlides.map((s) => s.model))
 const heroNames = heroSlides.map((s) => findModel(s.model)!.name)
 
 test('hero carousel: buttons, slide picker and autoplay', async ({ page, problems }, info) => {
@@ -41,14 +40,12 @@ test('hero carousel: buttons, slide picker and autoplay', async ({ page, problem
   await expect(page).toHaveURL(new RegExp(`/models/${heroSlides[last]!.model}$`))
 })
 
-test('"More vehicles" shows every model not in the hero, and View all opens the line-up', async ({ page, problems }) => {
+test('line-up cards show the home page models in order, and View all opens every model', async ({ page, problems }) => {
   void problems
   await open(page, '/')
   const section = page.locator('#models')
-  const others = models.filter((m) => !inHero.has(m.slug))
-  await expect(section.locator('article')).toHaveCount(others.length)
-  for (const m of others) await expect(section.getByRole('heading', { name: m.name, exact: true })).toBeVisible()
-  await section.getByRole('link', { name: 'View all' }).click()
+  await expect(section.locator('article h3')).toHaveText(homeModels.map((m) => m.name))
+  await section.getByRole('link', { name: 'View all models' }).click()
   await expect(page).toHaveURL(/\/models$/)
   await expect(page.locator('main article')).toHaveCount(models.length)
 })
@@ -73,9 +70,10 @@ test('home lead form: request type, model picker, dealer, confirmation', async (
 
   await section.getByText('Get a quote', { exact: true }).click()
   await expect(section.getByRole('button', { name: 'Request my quote' })).toBeVisible()
-  // Picking a model shows its photo.
-  await section.locator('label').filter({ hasText: 'BESTUNE T77' }).click()
-  await expect(section.getByRole('img', { name: 'BESTUNE T77' })).toBeVisible()
+  // Only the home page models are offered; picking one shows its photo.
+  await expect(section.locator('input[name="lead-model"]')).toHaveCount(homeModels.length)
+  await section.locator('label').filter({ hasText: 'JOYEE S08' }).click()
+  await expect(section.getByRole('img', { name: 'JOYEE S08' })).toBeVisible()
 
   // Contact details, dealer and consent are required.
   await section.getByRole('button', { name: 'Request my quote' }).click()
@@ -92,6 +90,6 @@ test('home lead form: request type, model picker, dealer, confirmation', async (
   const success = page.getByRole('status')
   await expect(success).toContainText('Thank you! Your request is in.')
   await expect(success).toContainText(/QT-[A-Z0-9]{6}/)
-  await expect(success).toContainText('BESTUNE T77')
+  await expect(success).toContainText('JOYEE S08')
   await expect(success).toContainText(dealers.find((d) => d.id === 'caloocan')!.name)
 })

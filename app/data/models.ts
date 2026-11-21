@@ -31,7 +31,7 @@ export interface CarModel {
   image: string
 }
 
-export const categories: { key: Category; label: string }[] = [
+const categoryLabels: { key: Category; label: string }[] = [
   { key: 'sedan', label: 'Sedans' },
   { key: 'suv', label: 'SUVs' },
   { key: 'mpv', label: 'MPV' },
@@ -61,19 +61,40 @@ export function powertrainGroup(m: CarModel): PowertrainGroup {
   return 'gasoline'
 }
 
-// Models of one body type, grouped by powertrain (empty groups left out).
+// Models of one body type, grouped by powertrain. Groups follow the line-up order too: the
+// group of the first-listed model comes first (SUVs: Hybrid S08, then Electric S04).
 export function modelsByPowertrain(category: Category) {
   const inCategory = models.filter((m) => m.category === category)
-  return powertrainGroups
-    .map((g) => ({ ...g, models: inCategory.filter((m) => powertrainGroup(m) === g.key) }))
-    .filter((g) => g.models.length)
+  const keys = [...new Set(inCategory.map(powertrainGroup))]
+  return keys.map((key) => ({
+    ...powertrainGroups.find((g) => g.key === key)!,
+    models: inCategory.filter((m) => powertrainGroup(m) === key),
+  }))
 }
 
 export const isCategory = (v: unknown): v is Category => categories.some((c) => c.key === v)
 
 const img = (slug: string) => `/images/models/${slug}/card.webp`
 
+// Line-up order set by the distributor. Every list follows it: menus, footer, model pages,
+// forms and the home carousel. BESTUNE B70S is not sold in the Philippines.
 export const models: CarModel[] = [
+  {
+    slug: 'joyee-n01',
+    name: 'JOYEE N01',
+    brand: 'JOYEE',
+    category: 'city',
+    body: '5-door city car',
+    powertrains: ['EV'],
+    tagline: 'Graceful New Look, Born to Own the Spotlight',
+    launchedPH: false,
+    keySpecs: [
+      { label: 'Range (CLTC)', value: '222–328 km' },
+      { label: 'Max power', value: '30 kW' },
+      { label: 'Seats', value: '4 seats' },
+    ],
+    image: img('joyee-n01'),
+  },
   {
     slug: 'joyee-n09',
     name: 'JOYEE N09',
@@ -123,20 +144,20 @@ export const models: CarModel[] = [
     image: img('joyee-s04'),
   },
   {
-    slug: 'joyee-n01',
-    name: 'JOYEE N01',
-    brand: 'JOYEE',
+    slug: 'bestune-xiaoma',
+    name: 'BESTUNE XIAOMA',
+    brand: 'BESTUNE',
     category: 'city',
-    body: '5-door city car',
+    body: '3-door city car',
     powertrains: ['EV'],
-    tagline: 'Graceful New Look, Born to Own the Spotlight',
+    tagline: 'Great Looks · Great Fun · Easy Drive · Great Value',
     launchedPH: false,
     keySpecs: [
-      { label: 'Range (CLTC)', value: '222–328 km' },
+      { label: 'Range (CLTC)', value: '222 km' },
       { label: 'Max power', value: '30 kW' },
       { label: 'Seats', value: '4 seats' },
     ],
-    image: img('joyee-n01'),
+    image: img('bestune-xiaoma'),
   },
   {
     slug: 'bestune-b70',
@@ -187,22 +208,6 @@ export const models: CarModel[] = [
     image: img('bestune-t77'),
   },
   {
-    slug: 'bestune-b70s',
-    name: 'BESTUNE B70S',
-    brand: 'BESTUNE',
-    category: 'suv',
-    body: 'Coupe SUV',
-    powertrains: ['Gasoline'],
-    tagline: 'Sculpted Light & Shadow Aesthetic Coupe SUV',
-    launchedPH: false,
-    keySpecs: [
-      { label: 'Engine', value: '1.5T / 2.0T' },
-      { label: 'Max power', value: '118–160 kW' },
-      { label: 'Transmission', value: '7DCT Transmission (7DCT270) / 6AT Transmission' },
-    ],
-    image: img('bestune-b70s'),
-  },
-  {
     slug: 'bestune-m9',
     name: 'BESTUNE M9',
     brand: 'BESTUNE',
@@ -218,23 +223,14 @@ export const models: CarModel[] = [
     ],
     image: img('bestune-m9'),
   },
-  {
-    slug: 'bestune-xiaoma',
-    name: 'BESTUNE XIAOMA',
-    brand: 'BESTUNE',
-    category: 'city',
-    body: '3-door city car',
-    powertrains: ['EV'],
-    tagline: 'Great Looks · Great Fun · Easy Drive · Great Value',
-    launchedPH: false,
-    keySpecs: [
-      { label: 'Range (CLTC)', value: '222 km' },
-      { label: 'Max power', value: '30 kW' },
-      { label: 'Seats', value: '4 seats' },
-    ],
-    image: img('bestune-xiaoma'),
-  },
 ]
+
+// Body types in line-up order (the type of the first-listed model comes first); types
+// without a model are left out.
+const firstIndex = (key: Category) => models.findIndex((m) => m.category === key)
+export const categories = categoryLabels
+  .filter((c) => firstIndex(c.key) >= 0)
+  .sort((a, b) => firstIndex(a.key) - firstIndex(b.key))
 
 export function findModel(slug: string) {
   return models.find((m) => m.slug === slug)

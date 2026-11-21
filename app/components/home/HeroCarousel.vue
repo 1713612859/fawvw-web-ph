@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // Home hero: full-screen photo under the transparent header, centred tags/title/buttons,
-// and model tabs along the bottom. Autoplays; pauses on hover.
+// and model tabs along the bottom (one per model: brand over the short name). Autoplays;
+// pauses on hover.
 import { heroSlides } from '~/data/home'
 import { media } from '~/data/media'
 import { findModel } from '~/data/models'
 
 const slides = heroSlides.map((s) => {
   const model = findModel(s.model)!
-  return { ...s, model, photo: media[model.slug]!.hero }
+  return { ...s, model, short: model.name.replace(`${model.brand} `, ''), photo: media[model.slug]!.hero }
 })
 const INTERVAL = 6500
 
@@ -121,22 +122,23 @@ function onTouchEnd(e: TouchEvent) {
       </div>
     </div>
 
-    <!-- Slide picker: model tabs from sm, dots on phones -->
+    <!-- Slide picker: model tabs from md (room left for the arrows on lg), dots below md -->
     <div class="absolute inset-x-0 bottom-0 z-20">
-      <div class="container-x flex items-stretch justify-center pb-3 sm:pb-0">
+      <div class="container-x flex items-stretch justify-center pb-3 md:pb-0 lg:px-16">
         <button
           v-for="(s, i) in slides"
           :key="s.model.slug"
           type="button"
-          class="relative grid h-11 w-8 place-items-center text-center font-bold leading-tight transition sm:block sm:h-auto sm:w-full sm:max-w-[160px] sm:px-2 sm:py-4 sm:text-[15px]"
-          :class="i === current ? 'text-white sm:bg-white/25' : 'text-white/60 hover:text-white'"
+          class="relative grid h-11 w-7 place-items-center text-center leading-tight transition md:block md:h-auto md:w-full md:max-w-[150px] md:px-1 md:py-3"
+          :class="i === current ? 'text-white md:bg-white/25' : 'text-white/60 hover:text-white'"
           :aria-label="`Show ${s.model.name}`"
           :aria-current="i === current"
           @click="go(i)"
         >
-          <span class="block h-1.5 rounded-full transition-all duration-300 sm:hidden" :class="i === current ? 'w-6 bg-white' : 'w-1.5 bg-white/50'" />
-          <span class="hidden sm:inline">{{ s.model.name }}</span>
-          <span v-if="i === current" class="absolute inset-x-0 bottom-0 hidden h-[3px] bg-white/30 sm:block">
+          <span class="block h-1.5 rounded-full transition-all duration-300 md:hidden" :class="i === current ? 'w-6 bg-white' : 'w-1.5 bg-white/50'" />
+          <span class="hidden text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75 md:block">{{ s.model.brand }}</span>
+          <span class="hidden whitespace-nowrap font-display text-[13px] font-bold md:block lg:text-[15px]">{{ s.short }}</span>
+          <span v-if="i === current" class="absolute inset-x-0 bottom-0 hidden h-[3px] bg-white/30 md:block">
             <span class="block h-full origin-left bg-white" :style="{ transform: `scaleX(${progress})` }" />
           </span>
         </button>

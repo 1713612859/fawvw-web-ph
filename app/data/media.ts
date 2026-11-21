@@ -66,9 +66,6 @@ export const media: Record<string, ModelMedia> = {
   'bestune-t77': set('bestune-t77', 'BESTUNE T77 in yellow in a studio with neon lights', [
     ['interior-1', 'BESTUNE T77 cockpit with dual screens, black interior'],
   ]),
-  'bestune-b70s': set('bestune-b70s', 'BESTUNE B70S kicking up dust on a gravel track', [
-    ['interior-1', 'BESTUNE B70S cockpit, black interior'],
-  ]),
   'bestune-m9': set('bestune-m9', 'BESTUNE M9 parked by a lake', [
     ['interior-1', 'BESTUNE M9 dashboard, beige interior'],
   ]),

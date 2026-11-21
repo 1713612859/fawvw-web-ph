@@ -9,7 +9,6 @@
 //   - rows with no value for any variant are left out.
 // Symbols that remain: ● standard, ○ optional, - not available.
 import b70 from './fawcar/bestune-b70.json' with { type: 'json' }
-import b70s from './fawcar/bestune-b70s.json' with { type: 'json' }
 import m9 from './fawcar/bestune-m9.json' with { type: 'json' }
 import t77 from './fawcar/bestune-t77.json' with { type: 'json' }
 import t90 from './fawcar/bestune-t90.json' with { type: 'json' }
@@ -42,7 +41,6 @@ export const sources: Record<string, FawcarSource> = {
   'bestune-b70': b70,
   'bestune-t90': t90,
   'bestune-t77': t77,
-  'bestune-b70s': b70s,
   'bestune-m9': m9,
   'bestune-xiaoma': xiaoma,
 }
@@ -102,14 +100,6 @@ const fixes: Record<string, Fix[]> = {
     { group: 'Exterior & Anti-Theft', label: 'Key Type', values: ['Mechanical key\nRemote key'], why: shifted },
     { group: 'Exterior & Anti-Theft', label: 'Keyless Start System', values: ['-'], why: shifted },
     { group: 'Exterior & Anti-Theft', label: 'Keyless Entry Function', values: ['-'], why: shifted },
-  ],
-  'bestune-b70s': [
-    { group: 'Basic Specifications', label: 'Engine', values: ['1.5T', '2.0T', '1.5T', '2.0T'], why: 'repeats the engine codes of the Engine group; shown as displacement like the other models' },
-    { group: 'Chassis & Steering', label: 'Drivetrain Type', values: ['Front-wheel drive'], why: 'spelled differently per variant' },
-    { group: 'Wheels & Brakes', label: 'Spare Tire Location', values: ['-'], why: 'one value missing' },
-    { group: 'Passive Safety', label: 'Driver & Passenger Airbags', values: ['Driver ● / Passenger ●'], why: `${shifted} for the 1.5T Luxury` },
-    { group: 'Passive Safety', label: 'Front & Rear Side Airbags', values: ['Front ● / Rear -'], why: `${shifted} for the 1.5T Luxury` },
-    { group: 'Passive Safety', label: 'Front & Rear Curtain Airbags', values: ['Front & Rear Integrated Side Curtain Airbags'], why: `${shifted} for the 1.5T Luxury` },
   ],
   'bestune-b70': [
     { group: 'Wheels & Brakes', label: 'Spare Tire Size', values: ['Temporary spare tire'], why: 'word repeated' },

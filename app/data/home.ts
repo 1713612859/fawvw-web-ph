@@ -1,4 +1,6 @@
 // Home page content: hero slides, promos (to be confirmed) and brand facts from fawcar.com.
+import { findModel } from './models'
+
 export { news } from './content'
 
 export interface HeroSlide {
@@ -8,9 +10,17 @@ export interface HeroSlide {
   copy: string
 }
 
-// The three JOYEE models launched in the Philippines (October 2026) lead, then two BESTUNE.
-// Figures are from each model's fawcar.com specification sheet.
+// The home page shows the new-energy models only (client request, November 2026): the
+// carousel, the line-up cards and the lead form's model picker all use these, in line-up
+// order (the unit tests check it). BESTUNE B70, T90, T77 and M9 are on /models and in the
+// menus. Figures are from each model's fawcar.com specification sheet.
 export const heroSlides: HeroSlide[] = [
+  {
+    model: 'joyee-n01',
+    eyebrow: 'JOYEE',
+    headline: 'Born to own the spotlight.',
+    copy: 'A five-door electric city car with up to 328 km of CLTC range, four seats and a 10.1-inch central screen.',
+  },
   {
     model: 'joyee-n09',
     eyebrow: 'New in the Philippines',
@@ -30,18 +40,14 @@ export const heroSlides: HeroSlide[] = [
     copy: 'Up to 565 km of CLTC range, a 14.6-inch touchscreen and 3.3 kW vehicle-to-load for camping trips and brownouts.',
   },
   {
-    model: 'bestune-b70',
+    model: 'bestune-xiaoma',
     eyebrow: 'BESTUNE',
-    headline: 'Ultra-safe smart luxury sedan.',
-    copy: '1.5T or 2.0T turbo power, a power liftback tailgate and available L2+ driver assistance.',
-  },
-  {
-    model: 'bestune-t90',
-    eyebrow: 'BESTUNE',
-    headline: 'Technology that enhances life.',
-    copy: 'A five-seat SUV with up to 185 kW from its 2.0T engine and 8-speed automatic, and six airbags as standard.',
+    headline: 'Great looks. Great fun. Easy drive.',
+    copy: 'A three-door electric city car with 222 km of CLTC range, rear-wheel drive and a two-tone macaron finish.',
   },
 ]
+
+export const homeModels = heroSlides.map((s) => findModel(s.model)!)
 
 export interface Promo {
   slug: string
